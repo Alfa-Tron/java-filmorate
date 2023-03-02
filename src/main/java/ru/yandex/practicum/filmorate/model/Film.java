@@ -14,17 +14,15 @@ public class Film {
     private String name;
     @Size(min = 1, max = 200)
     private String description;
-    @Email
-    private String email;
-    @Past
+    @PastOrPresent
     @NotNull
-    private LocalDate realise;
-    @Min(0)
+    private LocalDate releaseDate;
+    @Min(1)
     private Long duration;
 
     public boolean dateAfter(){
         LocalDate date = LocalDate.of(1895,11,28);
-        return realise.isAfter(date);
+        return releaseDate.isAfter(date);
 
     }
 

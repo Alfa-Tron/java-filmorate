@@ -21,6 +21,7 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@RequestBody @Valid Film film) {
+       int k =1;
         if(film.dateAfter()){
             if(film.getId()==null){
                 film.setId(id++);

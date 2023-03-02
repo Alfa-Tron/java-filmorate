@@ -19,6 +19,7 @@ public class UserController {
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
+        int k = 1;
         if (!user.getLogin().contains(" ")) {
             if ( user.getName() == null) {
                 user.setName(user.getLogin());
