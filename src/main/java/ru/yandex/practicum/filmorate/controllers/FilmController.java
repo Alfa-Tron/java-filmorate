@@ -16,20 +16,18 @@ import java.util.Map;
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
-
     private int id = 1;
 
     @PostMapping
     public Film addFilm(@RequestBody @Valid Film film) {
-       int k =1;
-        if(film.dateAfter()){
-            if(film.getId()==null){
+        int k = 1;
+        if (film.dateAfter()) {
+            if (film.getId() == null) {
                 film.setId(id++);
             }
-            films.put(film.getId(),film);
-            log.debug("Фильм с id {} добавлен",film.getId());
-        }
-        else {
+            films.put(film.getId(), film);
+            log.debug("Фильм с id {} добавлен", film.getId());
+        } else {
             log.error("Дата релиза раньше 28 декабря 1895 года");
             throw new ValidationException();
         }
@@ -51,7 +49,7 @@ public class FilmController {
             log.error("Фильма с таким id нет");
             throw new ValidationException();
         }
-return film;
+        return film;
     }
 
 }

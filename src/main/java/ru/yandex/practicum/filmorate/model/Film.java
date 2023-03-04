@@ -20,8 +20,8 @@ public class Film {
     @Min(1)
     private Long duration;
 
-    public boolean dateAfter(){
-        LocalDate date = LocalDate.of(1895,11,28);
+    public boolean dateAfter() {
+        LocalDate date = LocalDate.of(1895, 11, 28);
         return releaseDate.isAfter(date);
 
     }

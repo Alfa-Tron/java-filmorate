@@ -21,7 +21,7 @@ public class UserController {
     public User register(@RequestBody @Valid User user) {
         int k = 1;
         if (!user.getLogin().contains(" ")) {
-            if ( user.getName() == null) {
+            if (user.getName() == null) {
                 user.setName(user.getLogin());
             }
             if (user.getId() == null) {
