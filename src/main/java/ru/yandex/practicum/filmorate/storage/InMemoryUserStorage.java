@@ -23,7 +23,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User register(@RequestBody @Valid User user) {
         int k = 1;
         if (!user.getLogin().contains(" ")) {
-            if (user.getName() == null) {
+            if (user.getName() == null||user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
             if (user.getId() == null) {
