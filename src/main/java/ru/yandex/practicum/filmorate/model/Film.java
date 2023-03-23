@@ -10,7 +10,7 @@ import java.util.Set;
 public class Film{
 
     private Integer id;
-    @NotBlank
+    @NotNull
     private String name;
     @Size(min = 1, max = 200)
     private String description;
