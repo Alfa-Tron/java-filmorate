@@ -4,9 +4,10 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
-public class Film {
+public class Film{
 
     private Integer id;
     @NotBlank
@@ -18,11 +19,14 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private Long duration;
+    @Null
+    private Set<Integer> likes;
 
     public boolean dateAfter() {
         LocalDate date = LocalDate.of(1895, 11, 28);
         return releaseDate.isAfter(date);
 
     }
+
 
 }

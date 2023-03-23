@@ -2,62 +2,74 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
+
+import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
+
 @Slf4j
 @Service
 public class UserService {
-    private final Map<Integer, User> users = new HashMap<>();
 
-    private int id = 1;
+    public void addFriend(int id, int friendId) {
+        if (users.containsKey(id) && users.containsKey(friendId)) {
+            users.get(id).getFriends().add(friendId);
+            users.get(friendId).getFriends().add(id);
 
-    @PostMapping
-    public User register(@RequestBody @Valid User user) {
-        int k = 1;
-        if (!user.getLogin().contains(" ")) {
-            if (user.getName() == null) {
-                user.setName(user.getLogin());
-            }
-            if (user.getId() == null) {
-                user.setId(id++);
-            }
-            users.put(user.getId(), user);
-            log.debug("Пользователь с логином {} добавлен", user.getLogin());
         } else {
-            log.error("Логин содержит пробелы");
-            throw new ValidationException();
+            log.error("Человека с таким Id нет");
+            throw new NullPointerException();
         }
-
-        return user;
     }
 
-    @GetMapping
-    public Collection<User> getUsers() {
-        return new ArrayList<>(users.values());
+    public void deleteFriend(int id, int friendId) {
+        if (users.containsKey(id) && users.containsKey(friendId)) {
+            Set<Integer> friends = users.get(id).getFriends();
+            friends.remove(friendId);
+            Set<Integer> friendsFriend = users.get(friendId).getFriends();
+            friendsFriend.remove(id);
+        } else {
+            log.error("Человека с таким Id нет");
+            throw new NullPointerException();
+        }
     }
 
-    @PutMapping
-    public User update(@RequestBody @Valid User user) {
-        if (users.containsKey(user.getId())) {
-            if (user.getName().isBlank() || user.getName() == null) {
-                user.setName(user.getLogin());
+    public Collection<User> getFriends(int id) {
+        if (users.containsKey(id)) {
+            List<User> allFriends = new ArrayList<>();
+            Set<Integer> friendsId = users.get(id).getFriends();
+
+            for (int i : friendsId) {
+                allFriends.add(users.get(i));
             }
-            users.put(user.getId(), user);
+            return allFriends;
+
         } else {
-            log.error("Пользователя с id {} нет", user.getId());
-            throw new ValidationException();
+            log.error("Человека с таким Id нет");
+            throw new NullPointerException();
         }
-        return user;
+    }
+    public List<User> getGeneralFriends(int id,int friendId){
+        if (users.containsKey(id) && users.containsKey(friendId)) {
+            Set<Integer> friends = users.get(id).getFriends();
+            Set<Integer> friendsFriend = users.get(friendId).getFriends();
+            friends.retainAll(friendsFriend);
+            List<User> result = new ArrayList<>();
+            for(int i : friends){
+                result.add(users.get(i));
+            }
+            return result;
+        } else {
+            log.error("Человека с таким Id нет");
+            throw new NullPointerException();
+        }
+
     }
 
 }
+

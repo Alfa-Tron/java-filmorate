@@ -7,47 +7,45 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage.films;
+import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
+
 @Slf4j
 @Service
 public class FilmService {
 
-    public final Map<Integer, Film> films = new HashMap<>();
-    private int id = 1;
-
-    public Film addFilm(@RequestBody @Valid Film film) {
-        int k = 1;
-        if (film.dateAfter()) {
-            if (film.getId() == null) {
-                film.setId(id++);
-            }
-            films.put(film.getId(), film);
-            log.debug("Фильм с id {} добавлен", film.getId());
+    public void addLike(int filmId, int userId) {
+        if (films.containsKey(filmId) && users.containsKey(userId)) {
+            films.get(filmId).getLikes().add(userId);
         } else {
-            log.error("Дата релиза раньше 28 декабря 1895 года");
-            throw new ValidationException();
+            log.error("Пользователь или фильм с id не найден");
+            throw new NullPointerException();
         }
-
-        return film;
     }
 
-    public Collection<Film> getUsers() {
-        return new ArrayList<>(films.values());
-    }
-
-    public Film update(@RequestBody @Valid Film film) {
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-
+    public void deleteLike(int filmId, int userId) {
+        if (films.containsKey(filmId) && users.containsKey(userId)) {
+            films.get(filmId).getLikes().remove(userId);
         } else {
-            log.error("Фильма с таким id нет");
-            throw new ValidationException();
+            log.error("Пользователь или фильм с id не найден");
+            throw new NullPointerException();
         }
-        return film;
     }
+
+    public Collection<Film> getPopularityFilms(Integer count) {
+       if(count==null) count=10;
+        List<Film> result = new ArrayList<>();
+        List<Film> popularityFilms = new ArrayList<Film>(films.values());
+        popularityFilms.sort((o1, o2) -> o2.getLikes().size() - o1.getLikes().size());
+        for (int i = 0; i < count && i < popularityFilms.size(); i++) {
+            result.add(popularityFilms.get(i));
+        }
+        return result;
+    }
+
 
 }
 
