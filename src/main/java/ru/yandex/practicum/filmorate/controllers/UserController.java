@@ -22,7 +22,6 @@ public class UserController {
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
-
         return userStorage.register(user);
     }
 
