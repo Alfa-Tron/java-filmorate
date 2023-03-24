@@ -16,13 +16,11 @@ public class FilmService {
 
     public Film addLike(int filmId, int userId) {
         if (films.containsKey(filmId) && users.containsKey(userId)) {
-            System.out.println(films.get(filmId));
-            System.out.println(films.get(filmId).getLikes());
             films.get(filmId).getLikes().add(userId);
             return films.get(filmId);
         } else {
             log.error("Пользователь или фильм с id не найден");
-            throw new NullPointerException("Неверный id");
+            throw new NullPointerException("Неверный Id");
         }
     }
 
@@ -32,7 +30,7 @@ public class FilmService {
             return films.get(filmId);
         } else {
             log.error("Пользователь или фильм с id не найден");
-            throw new NullPointerException();
+            throw new NullPointerException("Неверный Id");
         }
     }
 
