@@ -17,18 +17,20 @@ import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
 @Service
 public class FilmService {
 
-    public void addLike(int filmId, int userId) {
+    public Film addLike(int filmId, int userId) {
         if (films.containsKey(filmId) && users.containsKey(userId)) {
             films.get(filmId).getLikes().add(userId);
+            return films.get(filmId);
         } else {
             log.error("Пользователь или фильм с id не найден");
             throw new NullPointerException();
         }
     }
 
-    public void deleteLike(int filmId, int userId) {
+    public Film deleteLike(int filmId, int userId) {
         if (films.containsKey(filmId) && users.containsKey(userId)) {
             films.get(filmId).getLikes().remove(userId);
+            return films.get(filmId);
         } else {
             log.error("Пользователь или фильм с id не найден");
             throw new NullPointerException();
