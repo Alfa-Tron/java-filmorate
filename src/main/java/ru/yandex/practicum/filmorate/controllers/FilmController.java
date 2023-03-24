@@ -9,10 +9,8 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
 import java.util.Collection;
-;
+
 
 @RestController
 @RequestMapping("/films")
@@ -25,7 +23,7 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@RequestBody @Valid Film film) {
-       return inMemoryFilmStorage.addFilm(film);
+        return inMemoryFilmStorage.addFilm(film);
     }
 
     @GetMapping
@@ -34,27 +32,27 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilm(@PathVariable int id){
+    public Film getFilm(@PathVariable int id) {
         return inMemoryFilmStorage.getFilm(id);
     }
 
     @PutMapping
     public Film update(@RequestBody @Valid Film film) {
-       return inMemoryFilmStorage.update(film);
+        return inMemoryFilmStorage.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film setLike(@PathVariable int id,@PathVariable int userId){
-        return filmService.addLike(id,userId);
+    public Film setLike(@PathVariable int id, @PathVariable int userId) {
+        return filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable int id,@PathVariable int userId){
-       return filmService.deleteLike(id,userId);
+    public Film deleteLike(@PathVariable int id, @PathVariable int userId) {
+        return filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularity(@RequestParam(name = "count", defaultValue = "10") int count){
+    public Collection<Film> getPopularity(@RequestParam(name = "count", defaultValue = "10") int count) {
         return filmService.getPopularityFilms(count);
 
     }

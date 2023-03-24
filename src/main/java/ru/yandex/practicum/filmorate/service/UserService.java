@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.validation.ValidationException;
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
@@ -52,13 +51,14 @@ public class UserService {
             throw new NullPointerException();
         }
     }
-    public List<User> getGeneralFriends(int id,int friendId){
+
+    public List<User> getGeneralFriends(int id, int friendId) {
         if (users.containsKey(id) && users.containsKey(friendId)) {
             Set<Integer> friends = new HashSet<>(users.get(id).getFriends());
             Set<Integer> friendsFriend = users.get(friendId).getFriends();
             friends.retainAll(friendsFriend);
             List<User> result = new ArrayList<>();
-            for(int i : friends){
+            for (int i : friends) {
                 result.add(users.get(i));
             }
             return result;

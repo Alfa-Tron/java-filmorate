@@ -2,9 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -22,7 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User register(@RequestBody @Valid User user) {
         if (!user.getLogin().contains(" ")) {
-            if (user.getName() == null||user.getName().isBlank()) {
+            if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
             if (user.getId() == null) {
@@ -39,17 +36,17 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserOne(int id){
-        if(users.containsKey(id)){
+    public User getUserOne(int id) {
+        if (users.containsKey(id)) {
             return users.get(id);
-        }
-        else {
-            log.error("Пользователя с таким {} нет",id);
-           throw new NullPointerException("Такого id нет");
+        } else {
+            log.error("Пользователя с таким {} нет", id);
+            throw new NullPointerException("Такого id нет");
         }
     }
+
     @Override
-    public Map<Integer,User> getUsers() {
+    public Map<Integer, User> getUsers() {
         return users;
     }
 
