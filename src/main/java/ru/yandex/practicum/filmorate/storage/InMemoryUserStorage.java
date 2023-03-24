@@ -46,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
         else {
             log.error("Пользователя с таким {} нет",id);
-            throw new NullPointerException();
+           throw new NullPointerException();
         }
     }
     @Override
