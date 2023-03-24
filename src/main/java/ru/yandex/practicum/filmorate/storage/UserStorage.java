@@ -9,7 +9,7 @@ public interface UserStorage {
 
     User register(User user);
 
-    User getUser(int id);
+    User getUserOne(int id);
 
     Map<Integer,User> getUsers();
 

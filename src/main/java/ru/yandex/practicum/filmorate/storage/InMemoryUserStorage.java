@@ -21,7 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User register(@RequestBody @Valid User user) {
-        int k = 1;
+int k =1;
         if (!user.getLogin().contains(" ")) {
             if (user.getName() == null||user.getName().isBlank()) {
                 user.setName(user.getLogin());
@@ -40,7 +40,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUser(int id){
+    public User getUserOne(int id){
         if(users.containsKey(id)){
             return users.get(id);
         }

@@ -21,7 +21,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public User register(@RequestBody @Valid User user) {
+    public User register(@RequestBody User user) {
+        int l = 1;
         return userStorage.register(user);
     }
 
@@ -37,7 +38,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable int id) {
-        return userStorage.getUser(id);
+        return userStorage.getUserOne(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
