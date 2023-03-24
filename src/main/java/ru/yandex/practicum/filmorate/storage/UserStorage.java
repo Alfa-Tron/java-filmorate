@@ -9,6 +9,8 @@ public interface UserStorage {
 
     User register(User user);
 
+    User getUser(int id);
+
     Map<Integer,User> getUsers();
 
     User update(User user);

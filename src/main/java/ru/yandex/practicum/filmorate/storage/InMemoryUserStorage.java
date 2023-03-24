@@ -40,6 +40,16 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public User getUser(int id){
+        if(users.containsKey(id)){
+            return users.get(id);
+        }
+        else {
+            log.error("Пользователя с таким {} нет",id);
+            throw new NullPointerException();
+        }
+    }
+    @Override
     public Map<Integer,User> getUsers() {
         return users;
     }

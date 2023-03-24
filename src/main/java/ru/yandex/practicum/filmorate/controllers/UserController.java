@@ -37,7 +37,6 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable int id) {
-        System.out.println(userStorage.getUsers());
         return userStorage.getUsers().get(id);
     }
 
