@@ -33,6 +33,11 @@ public class FilmController {
         return inMemoryFilmStorage.getFilms();
     }
 
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable int id){
+        return inMemoryFilmStorage.getFilm(id);
+    }
+
     @PutMapping
     public Film update(@RequestBody @Valid Film film) {
        return inMemoryFilmStorage.update(film);
@@ -48,8 +53,8 @@ public class FilmController {
        return filmService.deleteLike(id,userId);
     }
 
-    @GetMapping("/popular?count={count}")
-    public Collection<Film> getPopularity(@PathVariable int count){
+    @GetMapping("/popular")
+    public Collection<Film> getPopularity(@RequestParam(name = "count", defaultValue = "10") int count){
         return filmService.getPopularityFilms(count);
 
     }

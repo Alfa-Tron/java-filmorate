@@ -8,6 +8,8 @@ import java.util.Collections;
 public interface FilmStorage {
     Film addFilm(Film film);
 
+    Film getFilm(int id);
+
     Collection<Film> getFilms();
 
     Film update(Film film);
