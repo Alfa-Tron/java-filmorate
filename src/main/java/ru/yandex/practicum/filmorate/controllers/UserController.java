@@ -21,8 +21,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public User register(@RequestBody User user) {
-        int l = 1;
+    public User register(@RequestBody @Valid User user) {
         return userStorage.register(user);
     }
 

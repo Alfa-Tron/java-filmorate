@@ -21,7 +21,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User register(@RequestBody @Valid User user) {
-int k =1;
         if (!user.getLogin().contains(" ")) {
             if (user.getName() == null||user.getName().isBlank()) {
                 user.setName(user.getLogin());
@@ -33,7 +32,7 @@ int k =1;
             log.debug("Пользователь с логином {} добавлен", user.getLogin());
         } else {
             log.error("Логин содержит пробелы");
-            throw new ValidationException();
+            throw new ValidationException("Логин содержит пробелы");
         }
 
         return user;
@@ -46,7 +45,7 @@ int k =1;
         }
         else {
             log.error("Пользователя с таким {} нет",id);
-           throw new NullPointerException();
+           throw new NullPointerException("Такого id нет");
         }
     }
     @Override
@@ -63,7 +62,7 @@ int k =1;
             users.put(user.getId(), user);
         } else {
             log.error("Пользователя с id {} нет", user.getId());
-            throw new ValidationException();
+            throw new NullPointerException("Пользователя с таким id нет");
         }
         return user;
     }
