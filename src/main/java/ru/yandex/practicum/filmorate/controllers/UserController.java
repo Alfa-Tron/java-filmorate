@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping
     public Collection<User> getUsers() {
-        return userStorage.getUsers();
+        return userStorage.getUsers().values();
     }
 
     @PutMapping
@@ -36,27 +36,28 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@RequestParam int id) {
+    public User getUser(@PathVariable int id) {
+        System.out.println(userStorage.getUsers());
         return userStorage.getUsers().get(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@RequestParam int id, @RequestParam int friendId) {
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@RequestParam int id, @RequestParam int friendId) {
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> getFriends(@RequestParam int id) {
+    public Collection<User> getFriends(@PathVariable int id) {
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getGeneralFriends(@RequestParam int id,@RequestParam int otherId){
+    public Collection<User> getGeneralFriends(@PathVariable int id,@PathVariable int otherId){
         return userService.getGeneralFriends(id,otherId);
     }
 
