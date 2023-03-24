@@ -16,22 +16,24 @@ import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
 @Service
 public class UserService {
 
-    public void addFriend(int id, int friendId) {
+    public User addFriend(int id, int friendId) {
         if (users.containsKey(id) && users.containsKey(friendId)) {
             users.get(id).getFriends().add(friendId);
             users.get(friendId).getFriends().add(id);
+            return users.get(id);
         } else {
             log.error("Человека с таким Id нет");
             throw new NullPointerException("Такого id нет");
         }
     }
 
-    public void deleteFriend(int id, int friendId) {
+    public User deleteFriend(int id, int friendId) {
         if (users.containsKey(id) && users.containsKey(friendId)) {
             Set<Integer> friends = users.get(id).getFriends();
             friends.remove(friendId);
             Set<Integer> friendsFriend = users.get(friendId).getFriends();
             friendsFriend.remove(id);
+            return users.get(id);
         } else {
             log.error("Человека с таким Id нет");
             throw new NullPointerException("Такого id нет");
