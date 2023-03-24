@@ -23,7 +23,7 @@ public class UserService {
 
         } else {
             log.error("Человека с таким Id нет");
-            throw new NullPointerException();
+            throw new NullPointerException("Такого id нет");
         }
     }
 
@@ -35,7 +35,7 @@ public class UserService {
             friendsFriend.remove(id);
         } else {
             log.error("Человека с таким Id нет");
-            throw new NullPointerException();
+            throw new NullPointerException("Такого id нет");
         }
     }
 

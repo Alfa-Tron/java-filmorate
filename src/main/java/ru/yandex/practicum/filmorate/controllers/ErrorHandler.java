@@ -14,20 +14,20 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String,String> handleValidException(final ValidationException e){
+    public Map<String,String> handleValidException( ValidationException e){
         return Map.of("Ошибка валидации",e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String,String> handleNotResearchObj(final NullPointerException e){
+    public Map<String,String> handleNotResearchObj( NullPointerException e){
         return Map.of("Объект не найден",e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String,String> handleException(final Exception e){
-        return Map.of("Возникло исключение",e.getMessage());
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String,String> handleException( Exception e){
+        return Map.of("Ошибка",e.getMessage());
     }
 
 

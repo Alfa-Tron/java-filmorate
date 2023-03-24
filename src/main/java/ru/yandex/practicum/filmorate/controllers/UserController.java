@@ -22,6 +22,7 @@ public class UserController {
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
+        int k =1;
         return userStorage.register(user);
     }
 
