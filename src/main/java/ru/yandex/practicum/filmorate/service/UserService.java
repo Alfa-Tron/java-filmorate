@@ -20,7 +20,6 @@ public class UserService {
         if (users.containsKey(id) && users.containsKey(friendId)) {
             users.get(id).getFriends().add(friendId);
             users.get(friendId).getFriends().add(id);
-
         } else {
             log.error("Человека с таким Id нет");
             throw new NullPointerException("Такого id нет");
