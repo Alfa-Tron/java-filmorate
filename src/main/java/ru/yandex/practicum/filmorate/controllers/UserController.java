@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -14,30 +13,28 @@ import java.util.*;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-    @Autowired
-    private InMemoryUserStorage userStorage;
+    //Надеюсь правильно понял замечания
     @Autowired
     private UserService userService;
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
-        return userStorage.register(user);
+        return userService.register(user);
     }
 
     @GetMapping
     public Collection<User> getUsers() {
-        return userStorage.getUsers().values();
+        return new ArrayList<>(userService.getUsers());
     }
 
     @PutMapping
     public User update(@RequestBody @Valid User user) {
-        return userStorage.update(user);
+        return userService.update(user);
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable int id) {
-        return userStorage.getUserOne(id);
+        return userService.getUserOne(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -52,7 +49,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public Collection<User> getFriends(@PathVariable int id) {
-        return userService.getFriends(id);
+        return new ArrayList<>(userService.getFriends(id));
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")

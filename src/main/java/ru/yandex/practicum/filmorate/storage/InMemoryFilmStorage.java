@@ -9,6 +9,8 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.*;
 
+import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
+
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -17,8 +19,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int id = 1;
 
     @Override
-    public Film addFilm(@RequestBody @Valid Film film) {
-        int k = 1;
+    public Film addFilm(Film film) {
         if (film.dateAfter()) {
             if (film.getId() == null) {
                 film.setId(id++);
@@ -58,6 +59,41 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationException();
         }
         return film;
+    }
+
+    @Override
+    public Film addLike(int filmId, int userId) {
+        if (films.containsKey(filmId) && users.containsKey(userId)) {
+            films.get(filmId).getLikes().add(userId);
+            return films.get(filmId);
+        } else {
+            log.error("Пользователь или фильм с id не найден");
+            throw new NullPointerException("Неверный Id");
+        }
+    }
+
+    @Override
+    public Film deleteLike(int filmId, int userId) {
+        if (films.containsKey(filmId) && users.containsKey(userId)) {
+            films.get(filmId).getLikes().remove(userId);
+            return films.get(filmId);
+        } else {
+            log.error("Пользователь или фильм с id не найден");
+            throw new NullPointerException("Неверный Id");
+        }
+    }
+
+    @Override
+    public Collection<Film> getPopularityFilms(Integer count) {
+        if (count == null) count = 10;
+        List<Film> result = new ArrayList<>();
+        List<Film> popularityFilms = new ArrayList<Film>(films.values());
+        popularityFilms.sort((o1, o2) -> o2.getLikes().size() - o1.getLikes().size());
+
+        for (int i = 0; i < count && i < popularityFilms.size(); i++) {
+            result.add(popularityFilms.get(i));
+        }
+        return result;
     }
 
 }

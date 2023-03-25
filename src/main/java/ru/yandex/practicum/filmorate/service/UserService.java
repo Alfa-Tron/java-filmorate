@@ -1,72 +1,55 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 
-import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
 
 @Slf4j
 @Service
 public class UserService {
 
+    private final UserStorage userStorage;
+
+    public UserService() {
+        this.userStorage = new InMemoryUserStorage();
+    }
+
+    public User register(User user) {
+        return userStorage.register(user);
+    }
+
+    public Collection<User> getUsers() {
+        return userStorage.getUsers();
+    }
+
+    public User getUserOne(int id) {
+        return userStorage.getUserOne(id);
+    }
+
+    public User update(User user) {
+        return userStorage.update(user);
+    }
+
     public User addFriend(int id, int friendId) {
-        if (users.containsKey(id) && users.containsKey(friendId)) {
-            users.get(id).getFriends().add(friendId);
-            users.get(friendId).getFriends().add(id);
-            return users.get(id);
-        } else {
-            log.error("Человека с таким Id нет");
-            throw new NullPointerException("Такого id нет");
-        }
+        return userStorage.addFriend(id, friendId);
     }
 
     public User deleteFriend(int id, int friendId) {
-        if (users.containsKey(id) && users.containsKey(friendId)) {
-            Set<Integer> friends = users.get(id).getFriends();
-            friends.remove(friendId);
-            Set<Integer> friendsFriend = users.get(friendId).getFriends();
-            friendsFriend.remove(id);
-            return users.get(id);
-        } else {
-            log.error("Человека с таким Id нет");
-            throw new NullPointerException("Такого id нет");
-        }
+        return userStorage.deleteFriend(id, friendId);
     }
 
     public Collection<User> getFriends(int id) {
-        if (users.containsKey(id)) {
-            List<User> allFriends = new ArrayList<>();
-            Set<Integer> friendsId = users.get(id).getFriends();
-
-            for (int i : friendsId) {
-                allFriends.add(users.get(i));
-            }
-            return allFriends;
-
-        } else {
-            log.error("Человека с таким Id нет");
-            throw new NullPointerException();
-        }
+        return userStorage.getFriends(id);
     }
 
     public List<User> getGeneralFriends(int id, int friendId) {
-        if (users.containsKey(id) && users.containsKey(friendId)) {
-            Set<Integer> friends = new HashSet<>(users.get(id).getFriends());
-            Set<Integer> friendsFriend = users.get(friendId).getFriends();
-            friends.retainAll(friendsFriend);
-            List<User> result = new ArrayList<>();
-            for (int i : friends) {
-                result.add(users.get(i));
-            }
-            return result;
-        } else {
-            log.error("Человека с таким Id нет");
-            throw new NullPointerException();
-        }
-
+        return userStorage.getGeneralFriends(id, friendId);
     }
 
 }
