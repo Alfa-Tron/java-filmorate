@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class ErrorHandler {
         return Map.of("Ошибка валидации", e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({NullPointerException.class, EntityNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotResearchObj(NullPointerException e) {
         return Map.of("Объект не найден", e.getMessage());
