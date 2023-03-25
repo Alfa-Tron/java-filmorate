@@ -18,9 +18,15 @@ public class ErrorHandler {
         return Map.of("Ошибка валидации", e.getMessage());
     }
 
-    @ExceptionHandler({NullPointerException.class, EntityNotFoundException.class})
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNotResearchObj(NullPointerException e) {
+    public Map<String, String> handleNullException(NullPointerException e) {
+        return Map.of("ex", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotResearchObj(EntityNotFoundException e) {
         return Map.of("Объект не найден", e.getMessage());
     }
 
