@@ -1,12 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import javax.validation.ValidationException;
 import java.util.*;
 
 
@@ -21,7 +21,13 @@ public class UserService {
     }
 
     public User register(User user) {
-        return userStorage.register(user);
+        if (!user.getLogin().contains(" ")) {
+            return userStorage.register(user);
+        } else {
+            log.error("Логин содержит пробелы");
+            throw new ValidationException("Логин содержит пробелы");
+        }
+
     }
 
     public Collection<User> getUsers() {

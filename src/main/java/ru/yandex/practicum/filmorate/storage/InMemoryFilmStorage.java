@@ -2,11 +2,10 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import javax.validation.Valid;
-import javax.validation.ValidationException;
+import javax.persistence.EntityNotFoundException;
+
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
@@ -20,17 +19,12 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        if (film.dateAfter()) {
-            if (film.getId() == null) {
-                film.setId(id++);
-            }
-            films.put(film.getId(), film);
-            log.debug("Фильм с id {} добавлен", film.getId());
-        } else {
-            log.error("Дата релиза раньше 28 декабря 1895 года");
-            throw new ValidationException();
-        }
 
+        if (film.getId() == null) {
+            film.setId(id++);
+        }
+        films.put(film.getId(), film);
+        log.debug("Фильм с id {} добавлен", film.getId());
         return film;
     }
 
@@ -40,7 +34,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             return films.get(id);
         } else {
             log.error("Фильма с id {} нет", id);
-            throw new NullPointerException("Фильма с таким id нет");
+            throw new EntityNotFoundException("Фильма с таким id нет");
         }
     }
 
@@ -50,13 +44,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film update(@RequestBody @Valid Film film) {
+    public Film update(Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
 
         } else {
             log.error("Фильма с таким id нет");
-            throw new ValidationException();
+            throw new EntityNotFoundException("Фильма с таким id нет");
         }
         return film;
     }

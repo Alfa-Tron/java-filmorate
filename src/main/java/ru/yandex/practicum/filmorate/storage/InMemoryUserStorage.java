@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.*;
 
 @Slf4j
@@ -17,20 +17,16 @@ public class InMemoryUserStorage implements UserStorage {
     private int id = 1;
 
     @Override
-    public User register(@RequestBody @Valid User user) {
-        if (!user.getLogin().contains(" ")) {
-            if (user.getName() == null || user.getName().isBlank()) {
-                user.setName(user.getLogin());
-            }
-            if (user.getId() == null) {
-                user.setId(id++);
-            }
-            users.put(user.getId(), user);
-            log.debug("Пользователь с логином {} добавлен", user.getLogin());
-        } else {
-            log.error("Логин содержит пробелы");
-            throw new ValidationException("Логин содержит пробелы");
+    public User register(User user) {
+        //тут идет проверка на то, что логин не содержит пробелы
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
+        if (user.getId() == null) {
+            user.setId(id++);
+        }
+        users.put(user.getId(), user);
+        log.debug("Пользователь с логином {} добавлен", user.getLogin());
 
         return user;
     }
@@ -41,7 +37,7 @@ public class InMemoryUserStorage implements UserStorage {
             return users.get(id);
         } else {
             log.error("Пользователя с таким {} нет", id);
-            throw new NullPointerException("Такого id нет");
+            throw new EntityNotFoundException("Такого id нет");
         }
     }
 
@@ -59,7 +55,7 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(user.getId(), user);
         } else {
             log.error("Пользователя с id {} нет", user.getId());
-            throw new NullPointerException("Пользователя с таким id нет");
+            throw new EntityNotFoundException("Пользователя с таким id нет");
         }
         return user;
     }
