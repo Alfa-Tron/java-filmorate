@@ -1,2 +1,2 @@
 # java-filmorate
-Template repository for Filmorate project.
+![Схема базы данных])(Диаграмма без названия.drawio(1).png)
