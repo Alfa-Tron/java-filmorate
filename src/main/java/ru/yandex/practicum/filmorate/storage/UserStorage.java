@@ -20,8 +20,6 @@ public interface UserStorage {
     User addFriend(int id, int friendId);
 
     User deleteFriend(int id, int friendId);
-
     Collection<User> getFriends(int id);
-    
     List<User> getGeneralFriends(int id, int friendId);
 }
