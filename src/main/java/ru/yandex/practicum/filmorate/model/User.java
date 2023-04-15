@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Entity(name ="USERFILMORATE")
+//@Entity(name ="USERFILMORATE")
 public class User {
     private Integer id;
     @Email

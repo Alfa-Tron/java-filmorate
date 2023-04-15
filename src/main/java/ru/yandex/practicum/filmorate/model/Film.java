@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Entity(name ="FILM")
+//@Entity(name ="FILM")
 public class Film {
 
     private Integer id;
@@ -34,7 +34,7 @@ public class Film {
     public boolean dateAfter() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1895);
-        calendar.set(Calendar.MONTH, 10); // 10 - это ноябрь (отсчет месяцев начинается с 0)
+        calendar.set(Calendar.MONTH, 10);
         calendar.set(Calendar.DAY_OF_MONTH, 28);
         Date date = calendar.getTime();
         return releaseDate.after(date);
