@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class FilmDbStorage implements FilmStorage{
+public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
@@ -35,7 +35,7 @@ public class FilmDbStorage implements FilmStorage{
     public Film getFilm(int id) {
         SqlRowSet sql = jdbcTemplate.queryForRowSet("select * from FILM where ID = ?", id);
         Film film = new Film();
-        if(sql.next()){
+        if (sql.next()) {
             film.setId(id);
             film.setDescription(sql.getString("DESCRIPTION"));
             film.setName(sql.getString("NAME"));
@@ -60,7 +60,7 @@ public class FilmDbStorage implements FilmStorage{
     @Override
     public Film update(Film film) {
         jdbcTemplate.update("UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATING =? WHERE id = ?",
-               film.getName(),film.getDescription(),film.getReleaseDate(),film.getDuration(),film.getRating());
+                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getRating());
         return film;
     }
 
