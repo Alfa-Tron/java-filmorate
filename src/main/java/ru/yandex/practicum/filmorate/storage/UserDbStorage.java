@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.persistence.EntityNotFoundException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -57,8 +56,6 @@ public class UserDbStorage implements UserStorage {
             user.setLogin(userRows.getString("LOGIN"));
             user.setEmail(userRows.getString("EMAIL"));
             user.setBirthday(LocalDate.parse(userRows.getString("BIRTHDAY")));
-
-
         } else {
             log.info("Пользователь с идентификатором {} не найден.", id);
             throw new EntityNotFoundException("Такого id нет");
