@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import org.springframework.data.convert.Jsr310Converters;
+
 
 import javax.persistence.Entity;
 import javax.validation.constraints.*;
-import java.time.LocalDate;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
