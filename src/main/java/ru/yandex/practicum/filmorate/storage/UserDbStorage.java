@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -8,6 +9,8 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.persistence.EntityNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -42,6 +45,7 @@ public class UserDbStorage implements UserStorage {
 
     //  }
 
+    @SneakyThrows
     @Override
     public User getUserOne(int id) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from USERFILMORATE where id = ?", id);
@@ -51,7 +55,8 @@ public class UserDbStorage implements UserStorage {
             user.setName(userRows.getString("NAME"));
             user.setLogin(userRows.getString("LOGIN"));
             user.setEmail(userRows.getString("EMAIL"));
-            user.setBirthday(userRows.getDate("BIRTHDAY"));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            user.setBirthday(dateFormat.parse(dateFormat.format(userRows.getDate("BIRTHDAY"))));
 
 
         } else {
@@ -82,8 +87,12 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        jdbcTemplate.update("UPDATE userFilmorate SET EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? WHERE id = ?",
+        int t = jdbcTemplate.update("UPDATE userFilmorate SET EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? WHERE id = ?",
                 user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
+        if (t == 0) {
+            log.error("Пользователя с id {} нет", user.getId());
+            throw new EntityNotFoundException("Пользователя с таким id нет");
+        }
         return user;
     }
 
