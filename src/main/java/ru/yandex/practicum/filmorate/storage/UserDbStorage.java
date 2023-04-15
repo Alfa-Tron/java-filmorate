@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.persistence.EntityNotFoundException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -55,13 +56,12 @@ public class UserDbStorage implements UserStorage {
             user.setName(userRows.getString("NAME"));
             user.setLogin(userRows.getString("LOGIN"));
             user.setEmail(userRows.getString("EMAIL"));
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            user.setBirthday(dateFormat.parse(dateFormat.format(userRows.getDate("BIRTHDAY"))));
+            user.setBirthday(LocalDate.parse(userRows.getString("BIRTHDAY")));
 
 
         } else {
             log.info("Пользователь с идентификатором {} не найден.", id);
-            return null;
+            throw new EntityNotFoundException("Такого id нет");
         }
         SqlRowSet userRowsFr = jdbcTemplate.queryForRowSet("select FRIEND_ID, STATUS from FRIENDSHIP where USER_ID = ?", id);
         Set<Integer> friends = new HashSet<>();
