@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 
 
-import javax.persistence.Entity;
 import javax.validation.constraints.*;
 
 import java.util.Calendar;
