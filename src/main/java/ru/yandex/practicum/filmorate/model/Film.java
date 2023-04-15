@@ -1,13 +1,18 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import org.springframework.data.convert.Jsr310Converters;
 
+import javax.persistence.Entity;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Entity(name ="FILM")
 public class Film {
 
     private Integer id;
@@ -18,15 +23,21 @@ public class Film {
     private String description;
     @PastOrPresent
     @NotNull
-    private LocalDate releaseDate;
+    private Date releaseDate;
     @Min(1)
     private Long duration;
     private Set<Integer> likes = new HashSet<>();
+    @NotBlank
+    private String genre;
+    private String rating;
 
     public boolean dateAfter() {
-        LocalDate date = LocalDate.of(1895, 11, 28);
-        return releaseDate.isAfter(date);
-
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 1895);
+        calendar.set(Calendar.MONTH, 10); // 10 - это ноябрь (отсчет месяцев начинается с 0)
+        calendar.set(Calendar.DAY_OF_MONTH, 28);
+        Date date = calendar.getTime();
+        return releaseDate.after(date);
     }
 
 

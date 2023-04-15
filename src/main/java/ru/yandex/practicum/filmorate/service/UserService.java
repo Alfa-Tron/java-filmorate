@@ -1,32 +1,34 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ValidationException;
 import java.util.*;
 
 
-@Slf4j
-@Service
-public class UserService {
+    @Slf4j
+    @Service
+    public class UserService {
 
-    private final UserStorage userStorage;
 
-    public UserService() {
-        this.userStorage = new InMemoryUserStorage();
-    }
+        private final UserStorage userStorage;
+
+        public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
+            this.userStorage = userStorage;
+        }
+
 
     public User register(User user) {
-        if (!user.getLogin().contains(" ")) {
+        //   if (!user.getLogin().contains(" ")) {
             return userStorage.register(user);
-        } else {
-            log.error("Логин содержит пробелы");
-            throw new ValidationException("Логин содержит пробелы");
-        }
+       // } else {
+        //    log.error("Логин содержит пробелы");
+        //    throw new ValidationException("Логин содержит пробелы");
+      //  }
 
     }
 
