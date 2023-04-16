@@ -27,7 +27,6 @@ public class UserDbStorage implements UserStorage {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        String sql = "INSERT INTO USERFILMORATE (EMAIL, LOGIN, NAME, BIRTHDAY) VALUES (?,?,?,?)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("email", user.getEmail())
@@ -95,6 +94,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User addFriend(int id, int friendId) {
+        if (id < 0 || friendId < 0) throw new EntityNotFoundException("Пользователя с таким id нет");
         jdbcTemplate.update("INSERT INTO FRIENDSHIP (USER_ID, FRIEND_ID, STATUS) VALUES (?, ?, ?)",
                 id, friendId, false);
         jdbcTemplate.update("UPDATE FRIENDSHIP SET STATUS = ? WHERE (USER_ID = ? AND FRIEND_ID = ?) OR (USER_ID = ? AND FRIEND_ID = ?)",

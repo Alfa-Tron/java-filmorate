@@ -2,12 +2,10 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
-
 import javax.validation.constraints.*;
-
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -22,21 +20,28 @@ public class Film {
     private String description;
     @PastOrPresent
     @NotNull
-    private Date releaseDate;
+    private LocalDate releaseDate;
     @Min(1)
     private Long duration;
     private Set<Integer> likes = new HashSet<>();
-    @NotBlank
-    private String genre;
-    private String rating;
+    private Integer rate=0;
+    private List<Genre> genres;
+    private Mpa mpa;
 
     public boolean dateAfter() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 1895);
-        calendar.set(Calendar.MONTH, 10);
-        calendar.set(Calendar.DAY_OF_MONTH, 28);
-        Date date = calendar.getTime();
-        return releaseDate.after(date);
+        LocalDate date = LocalDate.of(1895, 11, 28);
+        return releaseDate.isAfter(date);
+
+    }
+
+    @Data
+   public static class Mpa{
+        private int id;
+    }
+    
+    @Data
+  public   static class Genre{
+        private int id;
     }
 
 

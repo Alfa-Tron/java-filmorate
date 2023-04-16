@@ -18,16 +18,38 @@ CREATE TABLE IF NOT EXISTS genre
     id   INTEGER PRIMARY KEY,
     name VARCHAR(50)
 );
+--INSERT INTO  genre (id, name) VALUES
+           --     (1, 'Комедия'),
+            --    (2, 'Драма'),
+             --   (3, 'Мультфильм'),
+            --  (4, 'Триллер'),
+             --   (5, 'Документальный'),
+            --    (6, 'Боевик');
+    CREATE TABLE IF NOT EXISTS film
+    (
+        id          INTEGER PRIMARY KEY,
+        film_name   VARCHAR(50),
+        description VARCHAR(50),
+        releaseDate DATE,
+        duration    INTEGER,
+        rate      INT,
+        mpa INT,
+       FOREIGN KEY (mpa) REFERENCES mpa_rating(id)
 
-CREATE TABLE IF NOT EXISTS film
+    );
+CREATE TABLE  IF NOT EXISTS mpa_rating
 (
-    id          INTEGER PRIMARY KEY,
-    film_name   VARCHAR(50),
-    description VARCHAR(50),
-    releaseDate DATE,
-    duration    INTEGER,
-    rating      VARCHAR(6)
+    id INT,
+    PRIMARY KEY (id),
+    mpa VARCHAR(6)
+
 );
+--INSERT INTO  mpa_rating (id, mpa) VALUES
+      --       (1, 'G'),
+      --       (2, 'PG'),
+      --   (3, 'PG-13'),
+     --     (4, 'R'),
+    --      (5, 'NC-17');
 
 CREATE TABLE IF NOT EXISTS filmLikes
 (
