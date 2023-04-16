@@ -13,19 +13,18 @@ CREATE TABLE IF NOT EXISTS  friendship(
             PRIMARY KEY (friend_id, user_id),
             status boolean
 );
-CREATE TABLE IF NOT EXISTS genre
-(
-    id   INTEGER PRIMARY KEY,
-    name VARCHAR(50)
-);
-INSERT INTO genre (id, name) VALUES
-                                 (1, 'Комедия'),
-                                 (2, 'Драма'),
-                                 (3, 'Мультфильм'),
-                                 (4, 'Триллер'),
-                                 (5, 'Документальный'),
-                                 (6, 'Боевик')
-    ON CONFLICT DO NOTHING;
+MERGE INTO genre g
+    USING (
+        SELECT 1 as id, 'Комедия' as name FROM DUAL
+        UNION ALL SELECT 2, 'Драма' FROM DUAL
+        UNION ALL SELECT 3, 'Мультфильм' FROM DUAL
+        UNION ALL SELECT 4, 'Триллер' FROM DUAL
+        UNION ALL SELECT 5, 'Документальный' FROM DUAL
+        UNION ALL SELECT 6, 'Боевик' FROM DUAL
+    ) new_data
+ON g.id = new_data.id
+WHEN NOT MATCHED THEN
+    INSERT (id, name) VALUES (new_data.id, new_data.name);
 
     CREATE TABLE IF NOT EXISTS film
     (
