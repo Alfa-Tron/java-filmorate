@@ -2,12 +2,15 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 
 import javax.persistence.EntityNotFoundException;
+import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,19 +30,29 @@ public class FilmDbStorage implements FilmStorage {
     public Film addFilm(Film film) {
         String sql = "INSERT INTO film (film_name, description, releaseDate, duration, rate, mpa) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
-                film.getRate(),
-                film.getMpa().getId());
 
-        for (Film.Genre genre : film.getGenres()) {
-            jdbcTemplate.update("INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
-                    film.getId(), genre.getId());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+            ps.setString(1, film.getName());
+            ps.setString(2, film.getDescription());
+            ps.setString(3, String.valueOf(film.getReleaseDate()));
+            ps.setLong(4, film.getDuration());
+            ps.setDouble(5, film.getRate());
+            ps.setInt(6, film.getMpa().getId());
+            return ps;
+        }, keyHolder);
+
+        film.setId(keyHolder.getKey().intValue()); // установка полученного id фильма в объект film
+
+        if (film.getGenres() != null) {
+
+            for (Film.Genre genre : film.getGenres()) {
+                jdbcTemplate.update("INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
+                        film.getId(), genre.getId());
+            }
         }
-
         return film;
     }
 
