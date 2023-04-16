@@ -115,8 +115,8 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
         if (film.getMpa() != null) {
-            jdbcTemplate.update("DELETE FROM MPA WHERE ID=" + film.getId());
-
+            String sqlMpa = "UPDATE FILM SET MPA = ? WHERE ID= ? ";
+            jdbcTemplate.update(sqlMpa, film.getMpa().getId(), film.getId());
         }
 
         String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? , MPA =? WHERE id =  " + film.getId();
