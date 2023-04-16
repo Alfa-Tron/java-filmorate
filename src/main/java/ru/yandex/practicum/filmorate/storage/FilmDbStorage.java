@@ -128,12 +128,20 @@ public class FilmDbStorage implements FilmStorage {
     public Film addLike(int filmId, int userId) {
         String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
         jdbcTemplate.update(query, filmId, userId);
-        return null;
+        String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
+
+        jdbcTemplate.update(sql, filmId);
+        return getFilm(filmId);
     }
 
     @Override
     public Film deleteLike(int filmId, int userId) {
-        return null;
+        String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
+        jdbcTemplate.update(query, filmId, userId);
+        String sql = "UPDATE FILM SET RATE=RATE-1 WHERE id = ? ";
+
+        jdbcTemplate.update(sql, filmId);
+        return getFilm(filmId);
     }
 
     @Override
