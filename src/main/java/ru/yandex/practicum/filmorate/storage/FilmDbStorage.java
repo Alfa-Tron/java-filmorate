@@ -25,10 +25,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        String sql = "INSERT INTO film (id,film_name, description, releaseDate, duration, rate, mpa) " +
+        String sql = "INSERT INTO film (film_name, description, releaseDate, duration, rate, mpa) " +
                 "VALUES (?,?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
-                film.getId(),
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -88,8 +87,14 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        int t = jdbcTemplate.update("UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? WHERE id = ?",
-                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa());
+        String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? , MPA =? WHERE id = "+film.getId();
+        int t = jdbcTemplate.update(sql,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getRate(),
+                film.getMpa().getId());
 
         if (t == 0) {
             log.error("фильма с id {} нет", film.getId());
