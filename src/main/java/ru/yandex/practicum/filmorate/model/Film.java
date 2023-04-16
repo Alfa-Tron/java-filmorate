@@ -24,7 +24,7 @@ public class Film {
     @Min(1)
     private Long duration;
     private Set<Integer> likes = new HashSet<>();
-    private Integer rate=0;
+    private Integer rate = 0;
     private List<Genre> genres;
     private Mpa mpa;
 
@@ -35,12 +35,12 @@ public class Film {
     }
 
     @Data
-   public static class Mpa{
+    public static class Mpa {
         private int id;
     }
-    
+
     @Data
-  public   static class Genre{
+    public static class Genre {
         private int id;
     }
 
