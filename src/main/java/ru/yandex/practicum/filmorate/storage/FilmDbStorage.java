@@ -108,7 +108,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         if (film.getGenres() != null) {
-            jdbcTemplate.update("DELETE FROM GENRE WHERE ID=" + film.getId());
+            jdbcTemplate.update("DELETE FROM FILMGENRE WHERE FILM_ID=" + film.getId());
             for (Film.Genre genre : film.getGenres()) {
                 jdbcTemplate.update("INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
                         film.getId(), genre.getId());
