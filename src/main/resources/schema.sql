@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS genre
         releaseDate DATE,
         duration    INTEGER,
         rate      INT,
-        mpa INT,
+        mpa INT
 
     );
 
