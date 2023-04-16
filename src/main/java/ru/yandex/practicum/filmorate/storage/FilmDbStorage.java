@@ -109,13 +109,14 @@ public class FilmDbStorage implements FilmStorage {
     public Film update(Film film) {
         if (film.getGenres() != null) {
             jdbcTemplate.update("DELETE FROM GENRE WHERE ID=" + film.getId());
-        }
-        if (film.getMpa() != null) {
-            jdbcTemplate.update("DELETE FROM MPA WHERE ID=" + film.getId());
             for (Film.Genre genre : film.getGenres()) {
                 jdbcTemplate.update("INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
                         film.getId(), genre.getId());
             }
+        }
+        if (film.getMpa() != null) {
+            jdbcTemplate.update("DELETE FROM MPA WHERE ID=" + film.getId());
+
         }
 
         String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? , MPA =? WHERE id =  " + film.getId();
