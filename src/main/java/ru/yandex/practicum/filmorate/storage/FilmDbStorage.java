@@ -69,11 +69,12 @@ public class FilmDbStorage implements FilmStorage {
             film.setDuration(sql.getLong("duration"));
             film.setRate(sql.getInt("rate"));
 
-            SqlRowSet sql1 = jdbcTemplate.queryForRowSet("select * from MPA_RATING where ID = ?", sql.getInt("rate"));
+            SqlRowSet sql1 = jdbcTemplate.queryForRowSet("select * from MPA_RATING where ID = ?",sql.getInt("rate"));
             Film.Mpa mpa = new Film.Mpa();
             mpa.setId(sql.getInt("mpa"));
-            if (sql1.next()) mpa.setName(sql1.getString("name"));
+            if(sql1.next())  mpa.setName(sql1.getString("name"));
             film.setMpa(mpa);
+
 
 
             List<Film.Genre> genres = new ArrayList<>();
