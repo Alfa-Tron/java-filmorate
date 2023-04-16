@@ -65,4 +65,14 @@ public class FilmController {
     public Film.Mpa getMpaOne(@PathVariable int id) {
         return filmService.getMpaOne(id);
     }
+
+    @GetMapping("/genres")
+    public Collection<Film.Genre> getGenres() {
+        return new ArrayList<>(filmService.getGenres());
+    }
+
+    @GetMapping("/genres/{id}")
+    public Film.Genre getGenreOne(@PathVariable int id) {
+        return filmService.getGenreOne(id);
+    }
 }

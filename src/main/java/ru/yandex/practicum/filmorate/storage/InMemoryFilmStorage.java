@@ -100,4 +100,14 @@ public class InMemoryFilmStorage implements FilmStorage {
         return null;
     }
 
+    @Override
+    public Collection<Film.Genre> getGenres() {
+        return null;
+    }
+
+    @Override
+    public Film.Genre getGenreOne(int id) {
+        return null;
+    }
+
 }

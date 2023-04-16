@@ -22,4 +22,8 @@ public interface FilmStorage {
     Collection<Film.Mpa> getMpa();
 
     Film.Mpa getMpaOne(int id);
+
+    Collection<Film.Genre> getGenres();
+
+    Film.Genre getGenreOne(int id);
 }

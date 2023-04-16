@@ -186,4 +186,32 @@ public class FilmDbStorage implements FilmStorage {
         throw new EntityNotFoundException("такого id нет");
 
     }
+
+    @Override
+    public Collection<Film.Genre> getGenres() {
+        List<Film.Genre> genres = new ArrayList<>();
+        String sql = "SELECT * FROM GENRE";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
+        while (sqlRowSet.next()) {
+            Film.Genre genre = new Film.Genre();
+            genre.setId(sqlRowSet.getInt("ID"));
+            genre.setName(sqlRowSet.getString("NAME"));
+            genres.add(genre);
+        }
+        return genres;
+    }
+
+    @Override
+    public Film.Genre getGenreOne(int id) {
+        String sql = "SELECT * FROM GENRE where ID=" + id;
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
+        while (sqlRowSet.next()) {
+            Film.Genre genre = new Film.Genre();
+            genre.setId(sqlRowSet.getInt("ID"));
+            genre.setName(sqlRowSet.getString("NAME"));
+            return genre;
+        }
+        throw new EntityNotFoundException("такого id нет");
+
+    }
 }

@@ -43,6 +43,7 @@ public class Film {
     @Data
     public static class Genre {
         private int id;
+        private String name;
     }
 
 
