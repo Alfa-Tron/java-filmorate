@@ -81,6 +81,8 @@ public class FilmDbStorage implements FilmStorage {
             while (sqlRowSet.next()) {
                 Film.Genre genre = new Film.Genre();
                 genre.setId(sqlRowSet.getInt("genre_id"));
+                SqlRowSet sqlRowSetGenre = jdbcTemplate.queryForRowSet("select * from GENRE where ID = ?", sqlRowSet.getInt("genre_id"));
+                if (sqlRowSetGenre.next()) genre.setName(sqlRowSetGenre.getString("name"));
                 genres.add(genre);
             }
             film.setGenres(genres);
