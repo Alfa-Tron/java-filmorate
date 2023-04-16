@@ -39,10 +39,6 @@ public class UserDbStorage implements UserStorage {
         user.setId(key.intValue());
         return user;
     }
-    //  private List<Integer> friends(int id){
-    //     SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from USERFILMORATE where id = ?", id);
-
-    //  }
 
     @SneakyThrows
     @Override
