@@ -39,9 +39,26 @@ WHEN NOT MATCHED THEN
         releaseDate DATE,
         duration    INTEGER,
         rate      INT,
-        mpa INT
-
+        mpa INT,
+            FOREIGN KEY (mpa) REFERENCES mpa_rating(id)
     );
+CREATE TABLE IF NOT EXISTS mpa_rating(
+    id INT PRIMARY KEY,
+    name VARCHAR(6)
+);
+MERGE INTO mpa_rating g
+    USING (
+        SELECT 1 as id, 'G' as name FROM DUAL
+        UNION ALL SELECT 2, 'PG' FROM DUAL
+        UNION ALL SELECT 3, 'PG-13' FROM DUAL
+        UNION ALL SELECT 4, 'R' FROM DUAL
+        UNION ALL SELECT 5, 'NC-17' FROM DUAL
+
+    ) new_data
+ON g.id = new_data.id
+WHEN NOT MATCHED THEN
+    INSERT (id, name) VALUES (new_data.id, new_data.name);
+
 
 
 CREATE TABLE IF NOT EXISTS filmLikes

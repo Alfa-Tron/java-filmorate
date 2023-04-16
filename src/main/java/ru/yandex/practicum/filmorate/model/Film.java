@@ -37,6 +37,7 @@ public class Film {
     @Data
     public static class Mpa {
         private int id;
+        private  String name;
     }
 
     @Data
