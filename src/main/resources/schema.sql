@@ -28,16 +28,8 @@ CREATE TABLE IF NOT EXISTS genre
         duration    INTEGER,
         rate      INT,
         mpa INT,
-       FOREIGN KEY (mpa) REFERENCES mpa_rating(id)
 
     );
-CREATE TABLE  IF NOT EXISTS mpa_rating
-(
-    id INT,
-    PRIMARY KEY (id),
-    mpa VARCHAR(6)
-
-);
 
 
 CREATE TABLE IF NOT EXISTS filmLikes
