@@ -18,8 +18,14 @@ CREATE TABLE IF NOT EXISTS genre
     id   INTEGER PRIMARY KEY,
     name VARCHAR(50)
 );
-
-
+INSERT INTO genre (id, name) VALUES
+                                 (1, 'Комедия'),
+                                 (2, 'Драма'),
+                                 (3, 'Мультфильм'),
+                                 (4, 'Триллер'),
+                                 (5, 'Документальный'),
+                                 (6, 'Боевик')
+    ON CONFLICT DO NOTHING;
 
     CREATE TABLE IF NOT EXISTS film
     (
