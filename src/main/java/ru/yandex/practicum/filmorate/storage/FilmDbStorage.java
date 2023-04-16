@@ -115,6 +115,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         if (film.getGenres() != null) {
+            List<Film.Genre> genres = new ArrayList<>();
             jdbcTemplate.update("DELETE FROM FILMGENRE WHERE FILM_ID=" + film.getId());
             for (Film.Genre genre : film.getGenres()) {
                 int count = jdbcTemplate.queryForObject(
@@ -124,9 +125,15 @@ public class FilmDbStorage implements FilmStorage {
                     jdbcTemplate.update(
                             "INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
                             film.getId(), genre.getId());
+                    Film.Genre g = new Film.Genre();
+                    g.setId(genre.getId());
+                    genres.add(g);
+
                 }
 
             }
+            film.setGenres(genres);
+
         }
         if (film.getMpa() != null) {
             String sqlMpa = "UPDATE FILM SET MPA = ? WHERE ID= ? ";
