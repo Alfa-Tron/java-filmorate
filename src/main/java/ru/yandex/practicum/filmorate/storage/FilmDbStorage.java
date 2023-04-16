@@ -49,8 +49,15 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getGenres() != null) {
 
             for (Film.Genre genre : film.getGenres()) {
-                jdbcTemplate.update("INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
-                        film.getId(), genre.getId());
+                int count = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM FILMGENRE WHERE FILM_ID = ? AND GENRE_ID = ?",
+                        Integer.class, film.getId(), genre.getId());
+                if (count == 0) {
+                    jdbcTemplate.update(
+                            "INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
+                            film.getId(), genre.getId());
+                }
+
             }
         }
         return film;
