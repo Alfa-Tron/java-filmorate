@@ -18,4 +18,8 @@ public interface FilmStorage {
     Film deleteLike(int filmId, int userId);
 
     Collection<Film> getPopularityFilms(Integer count);
+
+    Collection<Film.Mpa> getMpa();
+
+    Film.Mpa getMpaOne(int id);
 }

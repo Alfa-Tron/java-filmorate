@@ -14,45 +14,55 @@ import java.util.Collection;
 
 @RestController
 @Slf4j
-@RequestMapping("/films")
+//@RequestMapping("/films")
 public class FilmController {
 
     @Autowired
     private FilmService filmService;
 
-    @PostMapping
+    @PostMapping("/films")
     public Film addFilm(@RequestBody @Valid Film film) {
         return filmService.addFilm(film);
     }
 
-    @GetMapping
+    @GetMapping("/films")
     public Collection<Film> getFilms() {
         return new ArrayList<>(filmService.getFilms());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/films/{id}")
     public Film getFilm(@PathVariable int id) {
         return filmService.getFilm(id);
     }
 
-    @PutMapping
+    @PutMapping("/films")
     public Film update(@RequestBody @Valid Film film) {
         return filmService.update(film);
     }
 
-    @PutMapping("/{id}/like/{userId}")
+    @PutMapping("/films/{id}/like/{userId}")
     public Film setLike(@PathVariable int id, @PathVariable int userId) {
         return filmService.addLike(id, userId);
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
+    @DeleteMapping("/films/{id}/like/{userId}")
     public Film deleteLike(@PathVariable int id, @PathVariable int userId) {
         return filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/popular")
+    @GetMapping("/films/popular")
     public Collection<Film> getPopularity(@RequestParam(name = "count", defaultValue = "10") int count) {
         return filmService.getPopularityFilms(count);
 
+    }
+
+    @GetMapping("/mpa")
+    public Collection<Film.Mpa> getMpa() {
+        return new ArrayList<>(filmService.getMpa());
+    }
+
+    @GetMapping("/mpa/{id}")
+    public Film.Mpa getMpaOne(@PathVariable int id) {
+        return filmService.getMpaOne(id);
     }
 }

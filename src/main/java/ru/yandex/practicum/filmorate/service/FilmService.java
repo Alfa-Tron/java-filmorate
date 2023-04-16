@@ -56,5 +56,12 @@ public class FilmService {
     }
 
 
+    public Collection<Film.Mpa> getMpa() {
+        return filmStorage.getMpa();
+    }
+
+    public Film.Mpa getMpaOne(int id) {
+        return filmStorage.getMpaOne(id);
+    }
 }
 

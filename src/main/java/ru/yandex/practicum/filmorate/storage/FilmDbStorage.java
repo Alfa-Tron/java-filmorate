@@ -127,20 +127,23 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film addLike(int filmId, int userId) {
         String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
-        jdbcTemplate.update(query, filmId, userId);
+        int t = jdbcTemplate.update(query, filmId, userId);
         String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
 
-        jdbcTemplate.update(sql, filmId);
+        int t1 = jdbcTemplate.update(sql, filmId);
+        if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
         return getFilm(filmId);
     }
 
     @Override
     public Film deleteLike(int filmId, int userId) {
-        String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
-        jdbcTemplate.update(query, filmId, userId);
+        String query = "DELETE FROM filmLikes WHERE FILM_ID=? AND USER_ID=?";
+        int t = jdbcTemplate.update(query, filmId, userId);
         String sql = "UPDATE FILM SET RATE=RATE-1 WHERE id = ? ";
 
-        jdbcTemplate.update(sql, filmId);
+        int t1 = jdbcTemplate.update(sql, filmId);
+        if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
+
         return getFilm(filmId);
     }
 
@@ -154,5 +157,33 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         return films;
+    }
+
+    @Override
+    public Collection<Film.Mpa> getMpa() {
+        List<Film.Mpa> mpas = new ArrayList<>();
+        String sql = "SELECT * FROM MPA";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
+        while (sqlRowSet.next()) {
+            Film.Mpa mpa = new Film.Mpa();
+            mpa.setId(sqlRowSet.getInt("ID"));
+            mpa.setName(sqlRowSet.getString("NAME"));
+            mpas.add(mpa);
+        }
+        return mpas;
+    }
+
+    @Override
+    public Film.Mpa getMpaOne(int id) {
+        String sql = "SELECT * FROM MPA where ID=" + id;
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
+        while (sqlRowSet.next()) {
+            Film.Mpa mpa = new Film.Mpa();
+            mpa.setId(sqlRowSet.getInt("ID"));
+            mpa.setName(sqlRowSet.getString("NAME"));
+            return mpa;
+        }
+        throw new EntityNotFoundException("такого id нет");
+
     }
 }
