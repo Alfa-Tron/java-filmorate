@@ -69,7 +69,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setDuration(sql.getLong("duration"));
             film.setRate(sql.getInt("rate"));
 
-            SqlRowSet sql1 = jdbcTemplate.queryForRowSet("select * from MPA where ID = ?", sql.getInt("rate"));
+            SqlRowSet sql1 = jdbcTemplate.queryForRowSet("select * from MPA where ID = ?", sql.getInt("mpa"));
             Film.Mpa mpa = new Film.Mpa();
             mpa.setId(sql.getInt("mpa"));
             if (sql1.next()) mpa.setName(sql1.getString("name"));
@@ -85,6 +85,10 @@ public class FilmDbStorage implements FilmStorage {
             }
             film.setGenres(genres);
 
+        }
+        if (film.getName() == null) {
+            log.error("фильма с id {} нет", film.getId());
+            throw new EntityNotFoundException("фильма с таким id нет");
         }
         return film;
     }
@@ -138,7 +142,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "SELECT id FROM film ORDER BY rate DESC";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
         while (sqlRowSet.next() && count-- > 0) {
-            films.get(sqlRowSet.getInt("id"));
+            films.add(getFilm(sqlRowSet.getInt("id")));
         }
 
         return films;
