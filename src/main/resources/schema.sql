@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS  friendship(
             PRIMARY KEY (friend_id, user_id),
             status boolean
 );
+CREATE TABLE IF NOT EXISTS genre
+(
+    id   INTEGER PRIMARY KEY,
+    name VARCHAR(50)
+);
 MERGE INTO genre g
     USING (
         SELECT 1 as id, 'Комедия' as name FROM DUAL
