@@ -25,8 +25,8 @@ public class Film {
     private Long duration;
     private Set<Integer> likes = new HashSet<>();
     private Integer rate = 0;
-    private List<Genre> genres=null;
-    private Mpa mpa=null;
+    private List<Genre> genres = null;
+    private Mpa mpa = null;
 
     public boolean dateAfter() {
         LocalDate date = LocalDate.of(1895, 11, 28);
