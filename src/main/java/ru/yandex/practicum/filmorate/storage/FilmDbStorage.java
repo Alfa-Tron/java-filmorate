@@ -107,15 +107,26 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? , MPA =? WHERE id = ? ";
+        if (film.getGenres() != null) {
+            jdbcTemplate.update("DELETE FROM GENRE WHERE ID=" + film.getId());
+        }
+        if (film.getMpa() != null) {
+            jdbcTemplate.update("DELETE FROM MPA WHERE ID=" + film.getId());
+            for (Film.Genre genre : film.getGenres()) {
+                jdbcTemplate.update("INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
+                        film.getId(), genre.getId());
+            }
+        }
+
+        String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? , MPA =? WHERE id =  " + film.getId();
         int t = jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getRate(),
-                film.getMpa().getId(),
-                film.getId());
+                film.getMpa().getId());
+
 
         if (t == 0) {
             log.error("фильма с id {} нет", film.getId());
