@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS genre
 
     CREATE TABLE IF NOT EXISTS film
     (
-        id          INTEGER PRIMARY KEY,
+        id          INT AUTO_INCREMENT PRIMARY KEY,
         film_name   VARCHAR(50),
         description VARCHAR(50),
         releaseDate DATE,
