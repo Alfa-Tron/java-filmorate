@@ -21,7 +21,7 @@ public class GenreRepository {
 
     public Collection<Film.Genre> getGenres() {
         List<Film.Genre> genres = new ArrayList<>();
-        String sql = "SELECT * FROM GENRE";
+        String sql = "SELECT * FROM genre";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
         while (sqlRowSet.next()) {
             Film.Genre genre = new Film.Genre();
@@ -33,7 +33,7 @@ public class GenreRepository {
     }
 
     public Film.Genre getGenreOne(int id) {
-        String sql = "SELECT * FROM GENRE where ID=" + id;
+        String sql = "SELECT * FROM genre where ID=" + id;
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
         while (sqlRowSet.next()) {
             Film.Genre genre = new Film.Genre();
