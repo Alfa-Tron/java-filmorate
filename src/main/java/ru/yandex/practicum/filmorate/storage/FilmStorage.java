@@ -19,11 +19,4 @@ public interface FilmStorage {
 
     Collection<Film> getPopularityFilms(Integer count);
 
-    Collection<Film.Mpa> getMpa();
-
-    Film.Mpa getMpaOne(int id);
-
-    Collection<Film.Genre> getGenres();
-
-    Film.Genre getGenreOne(int id);
 }

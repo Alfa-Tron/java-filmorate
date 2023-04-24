@@ -56,20 +56,5 @@ public class FilmService {
     }
 
 
-    public Collection<Film.Mpa> getMpa() {
-        return filmStorage.getMpa();
-    }
-
-    public Film.Mpa getMpaOne(int id) {
-        return filmStorage.getMpaOne(id);
-    }
-
-    public Collection<Film.Genre> getGenres() {
-        return filmStorage.getGenres();
-    }
-
-    public Film.Genre getGenreOne(int id) {
-        return filmStorage.getGenreOne(id);
-    }
 }
 

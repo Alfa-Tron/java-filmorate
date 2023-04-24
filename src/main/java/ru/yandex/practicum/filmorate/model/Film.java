@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
+import javax.persistence.Entity;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-//@Entity(name ="FILM")
+@Entity
 public class Film {
 
     private Integer id;
@@ -37,7 +38,7 @@ public class Film {
     @Data
     public static class Mpa {
         private int id;
-        private  String name;
+        private String name;
     }
 
     @Data

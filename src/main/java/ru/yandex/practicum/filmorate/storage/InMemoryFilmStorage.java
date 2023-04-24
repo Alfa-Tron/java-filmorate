@@ -90,24 +90,5 @@ public class InMemoryFilmStorage implements FilmStorage {
         return result;
     }
 
-    @Override
-    public Collection<Film.Mpa> getMpa() {
-        return null;
-    }
-
-    @Override
-    public Film.Mpa getMpaOne(int id) {
-        return null;
-    }
-
-    @Override
-    public Collection<Film.Genre> getGenres() {
-        return null;
-    }
-
-    @Override
-    public Film.Genre getGenreOne(int id) {
-        return null;
-    }
 
 }

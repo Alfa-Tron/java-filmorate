@@ -8,27 +8,20 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 
+@Slf4j
+@Service
+public class UserService {
 
-    @Slf4j
-    @Service
-    public class UserService {
 
+    private final UserStorage userStorage;
 
-        private final UserStorage userStorage;
-
-        public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
-            this.userStorage = userStorage;
-        }
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
 
     public User register(User user) {
-        //   if (!user.getLogin().contains(" ")) {
-            return userStorage.register(user);
-       // } else {
-        //    log.error("Логин содержит пробелы");
-        //    throw new ValidationException("Логин содержит пробелы");
-      //  }
-
+        return userStorage.register(user);
     }
 
     public Collection<User> getUsers() {

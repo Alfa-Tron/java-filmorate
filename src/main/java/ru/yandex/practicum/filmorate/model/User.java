@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 
 
+import javax.persistence.Entity;
 import javax.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-//@Entity(name ="USERFILMORATE")
+@Entity
 public class User {
     private Integer id;
     @Email

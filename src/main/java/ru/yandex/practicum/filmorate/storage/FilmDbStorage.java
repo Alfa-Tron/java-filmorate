@@ -194,59 +194,5 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    @Override
-    public Collection<Film.Mpa> getMpa() {
-        List<Film.Mpa> mpas = new ArrayList<>();
-        String sql = "SELECT * FROM MPA";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
-        while (sqlRowSet.next()) {
-            Film.Mpa mpa = new Film.Mpa();
-            mpa.setId(sqlRowSet.getInt("ID"));
-            mpa.setName(sqlRowSet.getString("NAME"));
-            mpas.add(mpa);
-        }
-        return mpas;
-    }
 
-    @Override
-    public Film.Mpa getMpaOne(int id) {
-        String sql = "SELECT * FROM MPA where ID=" + id;
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
-        while (sqlRowSet.next()) {
-            Film.Mpa mpa = new Film.Mpa();
-            mpa.setId(sqlRowSet.getInt("ID"));
-            mpa.setName(sqlRowSet.getString("NAME"));
-            return mpa;
-        }
-        throw new EntityNotFoundException("такого id нет");
-
-    }
-
-    @Override
-    public Collection<Film.Genre> getGenres() {
-        List<Film.Genre> genres = new ArrayList<>();
-        String sql = "SELECT * FROM GENRE";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
-        while (sqlRowSet.next()) {
-            Film.Genre genre = new Film.Genre();
-            genre.setId(sqlRowSet.getInt("ID"));
-            genre.setName(sqlRowSet.getString("NAME"));
-            genres.add(genre);
-        }
-        return genres;
-    }
-
-    @Override
-    public Film.Genre getGenreOne(int id) {
-        String sql = "SELECT * FROM GENRE where ID=" + id;
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
-        while (sqlRowSet.next()) {
-            Film.Genre genre = new Film.Genre();
-            genre.setId(sqlRowSet.getInt("ID"));
-            genre.setName(sqlRowSet.getString("NAME"));
-            return genre;
-        }
-        throw new EntityNotFoundException("такого id нет");
-
-    }
 }

@@ -14,7 +14,6 @@ import java.util.Collection;
 
 @RestController
 @Slf4j
-//@RequestMapping("/films")
 public class FilmController {
 
     @Autowired
@@ -55,24 +54,5 @@ public class FilmController {
         return filmService.getPopularityFilms(count);
 
     }
-
-    @GetMapping("/mpa")
-    public Collection<Film.Mpa> getMpa() {
-        return new ArrayList<>(filmService.getMpa());
-    }
-
-    @GetMapping("/mpa/{id}")
-    public Film.Mpa getMpaOne(@PathVariable int id) {
-        return filmService.getMpaOne(id);
-    }
-
-    @GetMapping("/genres")
-    public Collection<Film.Genre> getGenres() {
-        return new ArrayList<>(filmService.getGenres());
-    }
-
-    @GetMapping("/genres/{id}")
-    public Film.Genre getGenreOne(@PathVariable int id) {
-        return filmService.getGenreOne(id);
-    }
 }
+
