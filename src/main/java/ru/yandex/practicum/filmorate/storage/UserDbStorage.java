@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -43,7 +44,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User getUserOne(int id) {
         String userSql = "SELECT * FROM USERFILMORATE WHERE id = ?";
-        String friendSql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = 1";
+        String friendSql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = true";
 
         return jdbcTemplate.query(userSql, ps -> ps.setInt(1, id), rs -> {
             if (!rs.next()) {
