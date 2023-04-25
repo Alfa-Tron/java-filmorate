@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.repository.GenreRepository;
 
 import java.util.ArrayList;
@@ -18,11 +19,11 @@ public class GenreService {
         this.genreRepository = genreRepository;
     }
 
-    public Collection<Film.Genre> getGenres() {
+    public Collection<Genre> getGenres() {
         return new ArrayList<>(genreRepository.getGenres());
     }
 
-    public Film.Genre getGenreOne(int id) {
+    public Genre getGenreOne(int id) {
         return genreRepository.getGenreOne(id);
     }
 

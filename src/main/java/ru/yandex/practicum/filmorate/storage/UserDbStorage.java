@@ -43,27 +43,32 @@ public class UserDbStorage implements UserStorage {
     @SneakyThrows
     @Override
     public User getUserOne(int id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from USERFILMORATE where id = ?", id);
-        User user = new User();
-        if (userRows.next()) {
-            user.setId(id);
-            user.setName(userRows.getString("NAME"));
-            user.setLogin(userRows.getString("LOGIN"));
-            user.setEmail(userRows.getString("EMAIL"));
-            user.setBirthday(LocalDate.parse(userRows.getString("BIRTHDAY")));
-        } else {
-            log.info("Пользователь с идентификатором {} не найден.", id);
-            throw new EntityNotFoundException("Такого id нет");
-        }
-        SqlRowSet userRowsFr = jdbcTemplate.queryForRowSet("select FRIEND_ID, STATUS from FRIENDSHIP where USER_ID = ?", id);
-        Set<Integer> friends = new HashSet<>();
-        while (userRowsFr.next()) {
-            if (userRowsFr.getBoolean("status")) {
-                friends.add(userRowsFr.getInt("FRIEND_ID"));
+        String userSql = "SELECT * FROM USERFILMORATE WHERE id = ?";
+        String friendSql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = 1";
+
+        return jdbcTemplate.query(userSql, ps -> ps.setInt(1, id), rs -> {
+            if (!rs.next()) {
+                log.info("Пользователь с идентификатором {} не найден.", id);
+                throw new EntityNotFoundException("Пользователь с таким id не найден");
             }
-        }
-        user.setFriends(friends);
-        return user;
+            User u = new User();
+            u.setId(rs.getInt("id"));
+            u.setName(rs.getString("name"));
+            u.setLogin(rs.getString("login"));
+            u.setEmail(rs.getString("email"));
+            u.setBirthday(rs.getDate("birthday").toLocalDate());
+
+            Set<Integer> friends = jdbcTemplate.query(friendSql, ps -> ps.setInt(1, id), rsFr -> {
+                Set<Integer> set = new HashSet<>();
+                while (rsFr.next()) {
+                    set.add(rsFr.getInt("FRIEND_ID"));
+                }
+                return set;
+            });
+            u.setFriends(friends);
+
+            return u;
+        });
     }
 
     @Override

@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Film;
+
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.ArrayList;
@@ -16,12 +17,12 @@ public class MpaController {
     private MpaService mpaService;
 
     @GetMapping("/mpa")
-    public Collection<Film.Mpa> getMpa() {
+    public Collection<Mpa> getMpa() {
         return new ArrayList<>(mpaService.getMpa());
     }
 
     @GetMapping("/mpa/{id}")
-    public Film.Mpa getMpaOne(@PathVariable int id) {
+    public Mpa getMpaOne(@PathVariable int id) {
         return mpaService.getMpaOne(id);
     }
 

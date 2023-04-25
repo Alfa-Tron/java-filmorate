@@ -7,6 +7,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 
 import javax.persistence.EntityNotFoundException;
@@ -48,7 +50,7 @@ public class FilmDbStorage implements FilmStorage {
 
         if (film.getGenres() != null) {
 
-            for (Film.Genre genre : film.getGenres()) {
+            for (Genre genre : film.getGenres()) {
                 int count = jdbcTemplate.queryForObject(
                         "SELECT COUNT(*) FROM FILMGENRE WHERE FILM_ID = ? AND GENRE_ID = ?",
                         Integer.class, film.getId(), genre.getId());
@@ -65,42 +67,51 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilm(int id) {
-        SqlRowSet sql = jdbcTemplate.queryForRowSet("select * from FILM where ID = ?", id);
-        Film film = new Film();
+        String sql = "SELECT * FROM FILM WHERE ID = ?";
+        Film film = jdbcTemplate.query(sql, new Object[]{id}, rs -> {
+            Film f = new Film();
+            if (rs.next()) {
+                f.setId(rs.getInt("id"));
+                f.setName(rs.getString("film_name"));
+                f.setDescription(rs.getString("description"));
+                f.setReleaseDate(LocalDate.parse(rs.getString("releaseDate")));
+                f.setDuration(rs.getLong("duration"));
+                f.setRate(rs.getInt("rate"));
 
-        if (sql.next()) {
-            film.setId(id);
-            film.setName(sql.getString("film_name"));
-            film.setDescription(sql.getString("description"));
-            film.setReleaseDate(LocalDate.parse(sql.getString("releaseDate")));
-            film.setDuration(sql.getLong("duration"));
-            film.setRate(sql.getInt("rate"));
+                int mpaId = rs.getInt("mpa");
+                String mpaSql = "SELECT * FROM MPA WHERE ID = ?";
+                Mpa mpa = jdbcTemplate.query(mpaSql, new Object[]{mpaId}, rsMpa -> {
+                    Mpa m = new Mpa();
+                    if (rsMpa.next()) {
+                        m.setId(rsMpa.getInt("id"));
+                        m.setName(rsMpa.getString("name"));
+                    }
+                    return m;
+                });
+                f.setMpa(mpa);
 
-            SqlRowSet sql1 = jdbcTemplate.queryForRowSet("select * from MPA where ID = ?", sql.getInt("mpa"));
-            Film.Mpa mpa = new Film.Mpa();
-            mpa.setId(sql.getInt("mpa"));
-            if (sql1.next()) mpa.setName(sql1.getString("name"));
-            film.setMpa(mpa);
-
-
-            List<Film.Genre> genres = new ArrayList<>();
-            SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet("select * from FILMGENRE where FILM_ID = ?", film.getId());
-            while (sqlRowSet.next()) {
-                Film.Genre genre = new Film.Genre();
-                genre.setId(sqlRowSet.getInt("genre_id"));
-                SqlRowSet sqlRowSetGenre = jdbcTemplate.queryForRowSet("select * from GENRE where ID = ?", sqlRowSet.getInt("genre_id"));
-                if (sqlRowSetGenre.next()) genre.setName(sqlRowSetGenre.getString("name"));
-                genres.add(genre);
+                String filmGenreSql = "SELECT g.id, g.name FROM GENRE g JOIN FILMGENRE fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
+                List<Genre> genres = jdbcTemplate.query(filmGenreSql, new Object[]{id}, rsGenre -> {
+                    List<Genre> list = new ArrayList<>();
+                    while (rsGenre.next()) {
+                        Genre g = new Genre();
+                        g.setId(rsGenre.getInt("id"));
+                        g.setName(rsGenre.getString("name"));
+                        list.add(g);
+                    }
+                    return list;
+                });
+                f.setGenres(genres);
             }
-            film.setGenres(genres);
-
-        }
+            return f;
+        });
         if (film.getName() == null) {
             log.error("фильма с id {} нет", film.getId());
             throw new EntityNotFoundException("фильма с таким id нет");
         }
         return film;
     }
+
 
     @Override
     public Collection<Film> getFilms() {
@@ -115,9 +126,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         if (film.getGenres() != null) {
-            List<Film.Genre> genres = new ArrayList<>();
+            List<Genre> genres = new ArrayList<>();
             jdbcTemplate.update("DELETE FROM FILMGENRE WHERE FILM_ID=" + film.getId());
-            for (Film.Genre genre : film.getGenres()) {
+            for (Genre genre : film.getGenres()) {
                 int count = jdbcTemplate.queryForObject(
                         "SELECT COUNT(*) FROM FILMGENRE WHERE FILM_ID = ? AND GENRE_ID = ?",
                         Integer.class, film.getId(), genre.getId());
@@ -125,7 +136,7 @@ public class FilmDbStorage implements FilmStorage {
                     jdbcTemplate.update(
                             "INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
                             film.getId(), genre.getId());
-                    Film.Genre g = new Film.Genre();
+                    Genre g = new Genre();
                     g.setId(genre.getId());
                     genres.add(g);
 

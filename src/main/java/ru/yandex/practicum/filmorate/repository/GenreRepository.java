@@ -1,9 +1,12 @@
 package ru.yandex.practicum.filmorate.repository;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -19,12 +22,12 @@ public class GenreRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Collection<Film.Genre> getGenres() {
-        List<Film.Genre> genres = new ArrayList<>();
+    public Collection<Genre> getGenres() {
+        List<Genre> genres = new ArrayList<>();
         String sql = "SELECT * FROM genre";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
         while (sqlRowSet.next()) {
-            Film.Genre genre = new Film.Genre();
+            Genre genre = new Genre();
             genre.setId(sqlRowSet.getInt("ID"));
             genre.setName(sqlRowSet.getString("NAME"));
             genres.add(genre);
@@ -32,15 +35,19 @@ public class GenreRepository {
         return genres;
     }
 
-    public Film.Genre getGenreOne(int id) {
+    public Genre getGenreOne(int id) {
         String sql = "SELECT * FROM genre where ID=" + id;
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
-        while (sqlRowSet.next()) {
-            Film.Genre genre = new Film.Genre();
-            genre.setId(sqlRowSet.getInt("ID"));
-            genre.setName(sqlRowSet.getString("NAME"));
-            return genre;
+        try {
+            return jdbcTemplate.query(sql, rs -> {
+                if (rs.next()) {
+                    return new Genre(rs.getInt("ID"), rs.getString("NAME"));
+                } else {
+                    throw new EntityNotFoundException("такого id нет");
+                }
+            }, id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("такого id нет");
         }
-        throw new EntityNotFoundException("такого id нет");
+
     }
 }

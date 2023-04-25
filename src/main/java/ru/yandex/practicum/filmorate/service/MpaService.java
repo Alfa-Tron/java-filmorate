@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 
 import java.util.Collection;
@@ -17,11 +17,11 @@ public class MpaService {
         this.mpaRepository = mpaRepository;
     }
 
-    public Collection<Film.Mpa> getMpa() {
+    public Collection<Mpa> getMpa() {
         return mpaRepository.getMpa();
     }
 
-    public Film.Mpa getMpaOne(int id) {
+    public Mpa getMpaOne(int id) {
         return mpaRepository.getMpaOne(id);
     }
 
