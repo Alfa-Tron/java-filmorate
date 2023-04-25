@@ -16,7 +16,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     private int id = 1;
 
-
     @Override
     public User register(User user) {
         //тут идет проверка на то, что логин не содержит пробелы
