@@ -34,7 +34,7 @@ public class GenreRepository {
     }
 
     public Genre getGenreOne(int id) {
-        String sql = "SELECT * FROM genre where ID=" + id;
+        String sql = "SELECT * FROM genre where ID=?";
         try {
             return jdbcTemplate.query(sql, rs -> {
                 if (rs.next()) {
