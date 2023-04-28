@@ -106,6 +106,7 @@ public class FilmDbStorageIntegrationTests {
         mpa.setId(2);
         originalFilm.setMpa(mpa);
         filmDbStorage.update(originalFilm);
+        System.out.println(filmDbStorage.getFilm(1));
         Assertions.assertEquals(2, filmDbStorage.getFilm(1).getMpa().getId());
     }
 

@@ -68,41 +68,40 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film getFilm(int id) {
         String sql = "SELECT * FROM FILM WHERE ID = ?";
-        Film film = jdbcTemplate.query(sql, new Object[]{id}, rs -> {
+        Film film = jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
             Film f = new Film();
-            if (rs.next()) {
-                f.setId(rs.getInt("id"));
-                f.setName(rs.getString("film_name"));
-                f.setDescription(rs.getString("description"));
-                f.setReleaseDate(LocalDate.parse(rs.getString("releaseDate")));
-                f.setDuration(rs.getLong("duration"));
-                f.setRate(rs.getInt("rate"));
+            f.setId(rs.getInt("id"));
+            f.setName(rs.getString("film_name"));
+            f.setDescription(rs.getString("description"));
+            f.setReleaseDate(LocalDate.parse(rs.getString("releaseDate")));
+            f.setDuration(rs.getLong("duration"));
+            f.setRate(rs.getInt("rate"));
 
-                int mpaId = rs.getInt("mpa");
-                String mpaSql = "SELECT * FROM MPA WHERE ID = ?";
-                Mpa mpa = jdbcTemplate.query(mpaSql, new Object[]{mpaId}, rsMpa -> {
-                    Mpa m = new Mpa();
-                    if (rsMpa.next()) {
-                        m.setId(rsMpa.getInt("id"));
-                        m.setName(rsMpa.getString("name"));
-                    }
-                    return m;
-                });
-                f.setMpa(mpa);
+            int mpaId = rs.getInt("mpa");
+            String mpaSql = "SELECT * FROM MPA WHERE ID = ?";
+            Mpa mpa = jdbcTemplate.queryForObject(mpaSql, new Object[]{mpaId}, (rsMpa, rowNUm) -> {
+                Mpa m = new Mpa();
+                if (rsMpa.next()) {
+                    m.setId(rsMpa.getInt("id"));
+                    m.setName(rsMpa.getString("name"));
+                }
+                return m;
+            });
+            f.setMpa(mpa);
 
-                String filmGenreSql = "SELECT g.id, g.name FROM GENRE g JOIN FILMGENRE fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
-                List<Genre> genres = jdbcTemplate.query(filmGenreSql, new Object[]{id}, rsGenre -> {
-                    List<Genre> list = new ArrayList<>();
-                    while (rsGenre.next()) {
-                        Genre g = new Genre();
-                        g.setId(rsGenre.getInt("id"));
-                        g.setName(rsGenre.getString("name"));
-                        list.add(g);
-                    }
-                    return list;
-                });
-                f.setGenres(genres);
-            }
+            String filmGenreSql = "SELECT g.id, g.name FROM GENRE g JOIN FILMGENRE fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
+            List<Genre> genres = jdbcTemplate.query(filmGenreSql, new Object[]{id}, rsGenre -> {
+                List<Genre> list = new ArrayList<>();
+                while (rsGenre.next()) {
+                    Genre g = new Genre();
+                    g.setId(rsGenre.getInt("id"));
+                    g.setName(rsGenre.getString("name"));
+                    list.add(g);
+                }
+                return list;
+            });
+            f.setGenres(genres);
+
             return f;
         });
         if (film.getName() == null) {

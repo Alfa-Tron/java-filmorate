@@ -45,18 +45,15 @@ public class UserDbStorage implements UserStorage {
         String userSql = "SELECT * FROM USERFILMORATE WHERE id = ?";
         String friendSql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = true";
 
-        return jdbcTemplate.query(userSql, ps -> ps.setInt(1, id), rs -> {
-            if (!rs.next()) {
-                log.info("Пользователь с идентификатором {} не найден.", id);
-                throw new EntityNotFoundException("Пользователь с таким id не найден");
-            }
+        User user = jdbcTemplate.queryForObject(userSql, new Object[]{id}, (rs, rowNum) -> {
             User u = new User();
             u.setId(rs.getInt("id"));
             u.setName(rs.getString("name"));
             u.setLogin(rs.getString("login"));
             u.setEmail(rs.getString("email"));
             u.setBirthday(rs.getDate("birthday").toLocalDate());
-
+            return u;
+        });
             Set<Integer> friends = jdbcTemplate.query(friendSql, ps -> ps.setInt(1, id), rsFr -> {
                 Set<Integer> set = new HashSet<>();
                 while (rsFr.next()) {
@@ -64,10 +61,9 @@ public class UserDbStorage implements UserStorage {
                 }
                 return set;
             });
-            u.setFriends(friends);
+            user.setFriends(friends);
 
-            return u;
-        });
+        return user;
     }
 
     @Override

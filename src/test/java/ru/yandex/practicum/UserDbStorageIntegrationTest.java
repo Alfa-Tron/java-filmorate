@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.FilmorateApplication;
@@ -69,11 +70,11 @@ class UserDbStorageIntegrationTest {
         assertThat(user.getEmail()).isEqualTo("testuser@example.com");
         assertThat(user.getBirthday()).isEqualTo(LocalDate.parse("1990-01-01"));
         assertThat(user.getFriends()).containsExactly(2);
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+        EmptyResultDataAccessException exception = assertThrows(EmptyResultDataAccessException.class, () -> {
             userStorage.getUserOne(99);
         });
 
-        String expectedMessage = "Пользователь с таким id не найден";
+        String expectedMessage = "Incorrect result size: expected 1, actual 0";
         String actualMessage = exception.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
