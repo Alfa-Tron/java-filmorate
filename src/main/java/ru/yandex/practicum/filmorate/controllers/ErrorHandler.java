@@ -30,6 +30,7 @@ public class ErrorHandler {
     public Map<String, String> handleNotResearchObj(EntityNotFoundException e) {
         return Map.of("Объект не найден", e.getMessage());
     }
+
     @ExceptionHandler(EmptyResultDataAccessException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleEmptyResultDataAccessException(EmptyResultDataAccessException e) {
