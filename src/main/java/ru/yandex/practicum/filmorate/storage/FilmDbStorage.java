@@ -81,10 +81,8 @@ public class FilmDbStorage implements FilmStorage {
             String mpaSql = "SELECT * FROM MPA WHERE ID = ?";
             Mpa mpa = jdbcTemplate.queryForObject(mpaSql, new Object[]{mpaId}, (rsMpa, rowNUm) -> {
                 Mpa m = new Mpa();
-                if (rsMpa.next()) {
-                    m.setId(rsMpa.getInt("id"));
-                    m.setName(rsMpa.getString("name"));
-                }
+                m.setId(rsMpa.getInt("id"));
+                m.setName(rsMpa.getString("name"));
                 return m;
             });
             f.setMpa(mpa);
