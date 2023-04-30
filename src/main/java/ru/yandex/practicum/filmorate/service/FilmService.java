@@ -33,7 +33,7 @@ public class FilmService {
         if (film.dateAfter()) {
             return filmStorage.addFilm(film);
         } else {
-            log.error("Дата релиза раньше 28 декабря 1231895 года");
+            log.error("Дата релиза раньше 28 декабря 1217179831112323895 года");
             throw new ValidationException();
         }
 
