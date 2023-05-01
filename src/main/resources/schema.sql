@@ -72,3 +72,20 @@ CREATE TABLE IF NOT EXISTS Friendship (
                             status boolean,
                             PRIMARY KEY (user_id, friend_id)
 );
+
+-- REVIEWS definition
+CREATE TABLE IF NOT EXISTS REVIEWS (
+	REVIEW_ID BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	CONTENT CHARACTER VARYING NOT NULL,
+	IS_POSITIVE BOOLEAN NOT NULL,
+	USEFUL BIGINT NOT NULL,
+	FILM_ID INTEGER NOT NULL REFERENCES film (id),
+	USER_ID INTEGER NOT NULL REFERENCES userFilmorate (id)
+);
+COMMENT ON COLUMN REVIEWS.REVIEW_ID IS 'Идентификатор отзыва';
+COMMENT ON COLUMN REVIEWS.CONTENT IS 'Текст отзыва';
+COMMENT ON COLUMN REVIEWS.IS_POSITIVE IS 'Тип отзыва (Негативный\\Положительный)';
+COMMENT ON COLUMN REVIEWS.USEFUL IS 'Оценка';
+COMMENT ON COLUMN REVIEWS.FILM_ID IS 'Уникальный идентификатор фильма';
+COMMENT ON COLUMN REVIEWS.USER_ID IS 'Уникальный идентификатор пользователя';
+-- END REVIEWS definition
