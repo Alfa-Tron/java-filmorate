@@ -202,5 +202,22 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
+    @Override
+    public Collection<Film> getCommonFilms(int userId, int friendId) {
+        List<Film> films = new ArrayList<>();
+        String sql = "SELECT f.*, M.* " +
+                "FROM FILMLIKES " +
+                "JOIN FILMLIKES fl ON fl.FILM_ID = FILMLIKES.FILM_ID " +
+                "JOIN FILM f on f.ID = fl.FILM_ID " +
+                "JOIN MPA M on f.ID = M.ID " +
+                "WHERE fl.USER_ID = ? AND FILMLIKES.USER_ID = ?" +
+                "ORDER BY f.RATE desc ";
 
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, userId, friendId);
+
+        while (sqlRowSet.next()) {
+            films.add(getFilm(sqlRowSet.getInt("ID")));
+        }
+        return films;
+    }
 }

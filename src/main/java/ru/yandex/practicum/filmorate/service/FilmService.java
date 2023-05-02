@@ -55,6 +55,8 @@ public class FilmService {
         return filmStorage.getPopularityFilms(count);
     }
 
-
+    public Collection<Film> getCommonFilms(int userId, int friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
 }
 
