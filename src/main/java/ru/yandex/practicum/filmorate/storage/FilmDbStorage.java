@@ -169,13 +169,24 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addLike(int filmId, int userId) {
-        String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
+        String selectQuery = "SELECT COUNT(*) FROM filmLikes WHERE film_id = ? AND user_id = ?";
+        int count = jdbcTemplate.queryForObject(selectQuery, Integer.class, filmId, userId);
+        if (count == 0) {
+            String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
+            int t = jdbcTemplate.update(query, filmId, userId);
+            String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
+            int t1 = jdbcTemplate.update(sql, filmId);
+            if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
+            return getFilm(filmId);
+        }
+      /*  String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
         int t = jdbcTemplate.update(query, filmId, userId);
         String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
 
         int t1 = jdbcTemplate.update(sql, filmId);
         if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
-        return getFilm(filmId);
+        return getFilm(filmId);*/
+        return null;
     }
 
     @Override
