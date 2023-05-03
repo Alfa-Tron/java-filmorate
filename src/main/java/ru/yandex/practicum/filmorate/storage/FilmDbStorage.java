@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
-
 import javax.persistence.EntityNotFoundException;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
@@ -212,9 +211,7 @@ public class FilmDbStorage implements FilmStorage {
                 "JOIN MPA M on f.ID = M.ID " +
                 "WHERE fl.USER_ID = ? AND FILMLIKES.USER_ID = ?" +
                 "ORDER BY f.RATE desc ";
-
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, userId, friendId);
-
         while (sqlRowSet.next()) {
             films.add(getFilm(sqlRowSet.getInt("ID")));
         }

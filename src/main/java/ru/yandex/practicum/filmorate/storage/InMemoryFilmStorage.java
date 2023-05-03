@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.persistence.EntityNotFoundException;
-
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
