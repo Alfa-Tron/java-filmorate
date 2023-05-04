@@ -124,5 +124,4 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteUser(int userId) {
     }
-
 }

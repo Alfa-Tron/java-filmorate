@@ -25,6 +25,4 @@ public class GenreService {
     public Genre getGenreOne(int id) {
         return genreRepository.getGenreOne(id);
     }
-
-
 }

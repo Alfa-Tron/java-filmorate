@@ -55,6 +55,5 @@ public class UserService {
     public void deleteUser(int userId) {
         userStorage.deleteUser(userId);
     }
-
 }
 

@@ -59,6 +59,5 @@ public class FilmController {
     public void deleteFilm(@PathVariable int filmId) {
         filmService.deleteFilm(filmId);
     }
-
 }
 

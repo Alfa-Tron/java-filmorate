@@ -34,5 +34,4 @@ public class Film {
         return releaseDate.isAfter(date);
 
     }
-
 }

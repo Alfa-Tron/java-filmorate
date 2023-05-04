@@ -24,5 +24,4 @@ public class MpaService {
     public Mpa getMpaOne(int id) {
         return mpaRepository.getMpaOne(id);
     }
-
 }
