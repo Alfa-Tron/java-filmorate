@@ -19,4 +19,7 @@ public interface FilmStorage {
 
     Collection<Film> getPopularityFilms(Integer count);
 
+    Collection<Film> getSortedDirectorsByYear(Integer directorId);
+
+    Collection<Film> getSortedDirectorsByLikes(Integer directorId);
 }

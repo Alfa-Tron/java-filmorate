@@ -5,34 +5,34 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Directors;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
-
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidationException;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.time.Month;
+import java.util.*;
 
-@Component
+@Repository
 @Slf4j
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private static final LocalDate DATE_OF_FIRST_FILM = LocalDate.of(1895, Month.DECEMBER, 28);
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
     @Override
     public Film addFilm(Film film) {
+        filmValidation(film);
         String sql = "INSERT INTO film (film_name, description, releaseDate, duration, rate, mpa) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -46,10 +46,9 @@ public class FilmDbStorage implements FilmStorage {
             return ps;
         }, keyHolder);
 
-        film.setId(keyHolder.getKey().intValue()); // установка полученного id фильма в объект film
+        film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue()); // установка полученного id фильма в объект film
 
         if (film.getGenres() != null) {
-
             for (Genre genre : film.getGenres()) {
                 int count = jdbcTemplate.queryForObject(
                         "SELECT COUNT(*) FROM FILMGENRE WHERE FILM_ID = ? AND GENRE_ID = ?",
@@ -59,10 +58,50 @@ public class FilmDbStorage implements FilmStorage {
                             "INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
                             film.getId(), genre.getId());
                 }
-
             }
         }
-        return film;
+
+        if (film.getDirectors() != null) {
+            for (Directors directors : film.getDirectors()) {
+                int count = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM FILMDIRECTORS WHERE FILM_ID = ? AND DIRECTORS_ID = ?",
+                        Integer.class, film.getId(), directors.getId());
+                if (count == 0) {
+                    jdbcTemplate.update(
+                            "INSERT INTO FILMDIRECTORS (FILM_ID, DIRECTORS_ID) VALUES (?,?)",
+                            film.getId(), directors.getId());
+                }
+            }
+        }
+        return getFilm(film.getId());
+    }
+
+    @Override
+    public Collection<Film> getSortedDirectorsByYear(Integer directorId) {
+        String sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
+                "FROM film f " +
+                "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
+                "WHERE fd.directors_id = ? " +
+                "ORDER BY f.releaseDate";
+        return jdbcTemplate.query(sql, new Object[]{directorId},
+                (rs, rowNum) -> getFilm(rs.getInt("id")));
+    }
+
+    @Override
+    public Collection<Film> getSortedDirectorsByLikes(Integer directorId) {
+        String sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate, COUNT(fl.user_id) AS likes " +
+                "FROM film f " +
+                "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
+                "LEFT JOIN filmLikes fl ON f.id = fl.film_id " +
+                "WHERE fd.directors_id = ? " +
+                "GROUP BY f.id " +
+                "ORDER BY likes DESC";
+        List<Film> films = jdbcTemplate.query(sql, new Object[]{directorId},
+                (rs, rowNum) -> getFilm(rs.getInt("id")));
+        if (films.isEmpty()) {
+            throw new EntityNotFoundException("не найден.");
+        }
+        return films;
     }
 
     @Override
@@ -76,7 +115,6 @@ public class FilmDbStorage implements FilmStorage {
             f.setReleaseDate(LocalDate.parse(rs.getString("releaseDate")));
             f.setDuration(rs.getLong("duration"));
             f.setRate(rs.getInt("rate"));
-
             int mpaId = rs.getInt("mpa");
             String mpaSql = "SELECT * FROM MPA WHERE ID = ?";
             Mpa mpa = jdbcTemplate.queryForObject(mpaSql, new Object[]{mpaId}, (rsMpa, rowNUm) -> {
@@ -87,7 +125,22 @@ public class FilmDbStorage implements FilmStorage {
             });
             f.setMpa(mpa);
 
-            String filmGenreSql = "SELECT g.id, g.name FROM GENRE g JOIN FILMGENRE fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
+            String filmDirectorsSql = "SELECT d.id, d.name FROM DIRECTORS d " +
+                    "JOIN FILMDIRECTORS fd on d.id = fd.directors_id WHERE fd.film_id = ?";
+            List<Directors> directors = jdbcTemplate.query(filmDirectorsSql, new Object[]{id}, rsDirectors -> {
+                List<Directors> list = new ArrayList<>();
+                while (rsDirectors.next()) {
+                    Directors d = new Directors();
+                    d.setId(rsDirectors.getInt("id"));
+                    d.setName(rsDirectors.getString("name"));
+                    list.add(d);
+                }
+                return list;
+            });
+            f.setDirectors(directors);
+
+            String filmGenreSql = "SELECT g.id, g.name FROM GENRE g " +
+                    "JOIN FILMGENRE fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
             List<Genre> genres = jdbcTemplate.query(filmGenreSql, new Object[]{id}, rsGenre -> {
                 List<Genre> list = new ArrayList<>();
                 while (rsGenre.next()) {
@@ -99,7 +152,6 @@ public class FilmDbStorage implements FilmStorage {
                 return list;
             });
             f.setGenres(genres);
-
             return f;
         });
         if (film.getName() == null) {
@@ -108,7 +160,6 @@ public class FilmDbStorage implements FilmStorage {
         }
         return film;
     }
-
 
     @Override
     public Collection<Film> getFilms() {
@@ -122,49 +173,21 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        if (film.getGenres() != null) {
-            List<Genre> genres = new ArrayList<>();
-            jdbcTemplate.update("DELETE FROM FILMGENRE WHERE FILM_ID=" + film.getId());
-            for (Genre genre : film.getGenres()) {
-                int count = jdbcTemplate.queryForObject(
-                        "SELECT COUNT(*) FROM FILMGENRE WHERE FILM_ID = ? AND GENRE_ID = ?",
-                        Integer.class, film.getId(), genre.getId());
-                if (count == 0) {
-                    jdbcTemplate.update(
-                            "INSERT INTO FILMGENRE (FILM_ID, GENRE_ID) VALUES (?,?)",
-                            film.getId(), genre.getId());
-                    Genre g = new Genre();
-                    g.setId(genre.getId());
-                    genres.add(g);
-
-                }
-
-            }
-            film.setGenres(genres);
-
-        }
-        if (film.getMpa() != null) {
-            String sqlMpa = "UPDATE FILM SET MPA = ? WHERE ID= ? ";
-            jdbcTemplate.update(sqlMpa, film.getMpa().getId(), film.getId());
-        }
-
-        String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? , MPA =? WHERE id =  " + film.getId();
-        int t = jdbcTemplate.update(sql,
+        filmValidation(film);
+        String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?," +
+                " DURATION = ?, RATE = ?, MPA = ? WHERE ID = " + film.getId();
+        jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getRate(),
                 film.getMpa().getId());
-
-
-        if (t == 0) {
-            log.error("фильма с id {} нет", film.getId());
-            throw new EntityNotFoundException("фильма с таким id нет");
-        }
-
-        return film;
-
+        Optional<List<Genre>> filmGenres = Optional.ofNullable(film.getGenres());
+        setGenresToFilm(filmGenres, film.getId());
+        Optional<List<Directors>> filmDirectors = Optional.ofNullable(film.getDirectors());
+        setDirectorsToFilm(filmDirectors, film.getId());
+        return getFilm(film.getId());
     }
 
     @Override
@@ -172,7 +195,6 @@ public class FilmDbStorage implements FilmStorage {
         String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
         int t = jdbcTemplate.update(query, filmId, userId);
         String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
-
         int t1 = jdbcTemplate.update(sql, filmId);
         if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
         return getFilm(filmId);
@@ -183,10 +205,8 @@ public class FilmDbStorage implements FilmStorage {
         String query = "DELETE FROM filmLikes WHERE FILM_ID=? AND USER_ID=?";
         int t = jdbcTemplate.update(query, filmId, userId);
         String sql = "UPDATE FILM SET RATE=RATE-1 WHERE id = ? ";
-
         int t1 = jdbcTemplate.update(sql, filmId);
         if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
-
         return getFilm(filmId);
     }
 
@@ -198,9 +218,46 @@ public class FilmDbStorage implements FilmStorage {
         while (sqlRowSet.next() && count-- > 0) {
             films.add(getFilm(sqlRowSet.getInt("id")));
         }
-
         return films;
     }
 
+    private void setDirectorsToFilm(Optional<List<Directors>> filmDirectors, int filmId) {
+        String sqlQuery = "DELETE FROM FILMDIRECTORS WHERE FILM_ID = ?";
+        List<Directors> directorsAsList = new ArrayList<>();
+        filmDirectors.ifPresent(directorsAsList::addAll);
+        jdbcTemplate.update(sqlQuery, filmId);
+        if (filmDirectors.isPresent() && !filmDirectors.get().isEmpty()) {
+            String sqlQuery2 = "MERGE INTO FILMDIRECTORS (DIRECTORS_ID, FILM_ID) KEY (DIRECTORS_ID, FILM_ID) VALUES (?, ?)";
+            jdbcTemplate.batchUpdate(sqlQuery2, directorsAsList, directorsAsList.size(), (PreparedStatement ps, Directors d) -> {
+                ps.setInt(1, d.getId());
+                ps.setInt(2, filmId);
+            });
+        }
+    }
 
+    private void setGenresToFilm(Optional<List<Genre>> filmGenres, int filmId) {
+        String sqlQuery = "DELETE FROM FILMGENRE WHERE FILM_ID = ?";
+        List<Genre> genresAsList = new ArrayList<>();
+        filmGenres.ifPresent(genresAsList::addAll);
+        jdbcTemplate.update(sqlQuery, filmId);
+        if (filmGenres.isPresent() && !filmGenres.get().isEmpty()) {
+            String sqlQuery2 = "MERGE INTO FILMGENRE (GENRE_ID, FILM_ID) KEY (GENRE_ID, FILM_ID) VALUES (?, ?)";
+            jdbcTemplate.batchUpdate(sqlQuery2, genresAsList, 6, (PreparedStatement ps, Genre g) -> {
+                ps.setInt(1, g.getId());
+                ps.setInt(2, filmId);
+            });
+        }
+    }
+
+    private void filmValidation(Film film) {
+        if (film.getName() == null || film.getName().isEmpty()) {
+            throw new ValidationException("Ошибка регистрации названия фильма.");
+        } else if (film.getDescription() == null || film.getDescription().length() > 200) {
+            throw new ValidationException("Ошибка регистрации описания фильма.");
+        } else if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(DATE_OF_FIRST_FILM)) {
+            throw new ValidationException("Ошибка регистрации даты релиза фильма.");
+        } else if (film.getDuration() < 0) {
+            throw new ValidationException("Ошибка регистрации длительности фильма.");
+        }
+    }
 }

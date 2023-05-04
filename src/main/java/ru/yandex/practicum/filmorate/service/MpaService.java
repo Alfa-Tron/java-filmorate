@@ -9,7 +9,6 @@ import java.util.Collection;
 
 @Service("mpaService")
 public class MpaService {
-
     @Autowired
     private final MpaRepository mpaRepository;
 
@@ -24,5 +23,4 @@ public class MpaService {
     public Mpa getMpaOne(int id) {
         return mpaRepository.getMpaOne(id);
     }
-
 }

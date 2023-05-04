@@ -6,22 +6,24 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 @RestController
 @Slf4j
 public class FilmController {
-
     @Autowired
     private FilmService filmService;
 
     @PostMapping("/films")
     public Film addFilm(@RequestBody @Valid Film film) {
         return filmService.addFilm(film);
+    }
+
+    @GetMapping("/films/director/{directorId}")
+    public Collection<Film> getSortedDirectors(@PathVariable int directorId, @RequestParam String sortBy) {
+        return filmService.getSortedDirectors(directorId, sortBy);
     }
 
     @GetMapping("/films")

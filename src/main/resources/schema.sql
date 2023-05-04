@@ -1,7 +1,11 @@
-
+CREATE TABLE IF NOT EXISTS directors
+(
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+);
 CREATE TABLE IF NOT EXISTS userFilmorate
 (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
     email     VARCHAR(50),
     login     VARCHAR(50),
     name VARCHAR(50),
@@ -32,7 +36,6 @@ CREATE TABLE IF NOT EXISTS mpa(
                                          name VARCHAR(6)
 );
 
-
 MERGE INTO mpa
     KEY (id)
     VALUES (1, 'G'),
@@ -59,6 +62,12 @@ CREATE TABLE IF NOT EXISTS filmLikes
     film_id INTEGER REFERENCES film (id),
     user_id INTEGER REFERENCES userFilmorate (id),
     PRIMARY KEY (film_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS FilmDirectors
+(
+    film_id  INTEGER REFERENCES film (id),
+    directors_id INTEGER REFERENCES directors (id) ON DELETE CASCADE,
+    PRIMARY KEY (film_id, directors_id)
 );
 CREATE TABLE IF NOT EXISTS FilmGenre
 (
