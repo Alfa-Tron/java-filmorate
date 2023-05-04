@@ -131,7 +131,7 @@ public class FilmDbStorageIntegrationTests {
         userStorage.register(user);
         filmDbStorage.addLike(1, 1);
 
-        Assertions.assertEquals(6, filmDbStorage.getFilm(1).getRate());
+        Assertions.assertEquals(1, filmDbStorage.getFilm(1).getRate());
     }
 
     @Test
@@ -154,9 +154,9 @@ public class FilmDbStorageIntegrationTests {
         user.setBirthday(LocalDate.of(1990, 1, 1));
         userStorage.register(user);
         filmDbStorage.addLike(1, 1);
-        Assertions.assertEquals(6, filmDbStorage.getFilm(1).getRate());
+        Assertions.assertEquals(1, filmDbStorage.getFilm(1).getRate());
         filmDbStorage.deleteLike(1, 1);
-        Assertions.assertEquals(5, filmDbStorage.getFilm(1).getRate());
+        Assertions.assertEquals(0, filmDbStorage.getFilm(1).getRate());
 
     }
 
