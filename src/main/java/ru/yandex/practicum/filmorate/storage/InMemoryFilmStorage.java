@@ -90,5 +90,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         return result;
     }
 
+    @Override
+    public void deleteFilm(int id) {
+    }
 
 }

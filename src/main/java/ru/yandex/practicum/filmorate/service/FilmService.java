@@ -55,6 +55,9 @@ public class FilmService {
         return filmStorage.getPopularityFilms(count);
     }
 
+    public void deleteFilm(int filmId) {
+        filmStorage.deleteFilm(filmId);
+    }
 
 }
 

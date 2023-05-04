@@ -108,6 +108,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getFriends(int id) {
+        String sql = "SELECT COUNT(*) FROM userFilmorate WHERE id = ?";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        if(count == 0) throw new EntityNotFoundException("111");
         SqlRowSet userRowsFr = jdbcTemplate.queryForRowSet("select FRIEND_ID, STATUS from FRIENDSHIP where USER_ID = ?", id);
         Set<User> friends = new HashSet<>();
         while (userRowsFr.next()) {
@@ -129,5 +132,26 @@ public class UserDbStorage implements UserStorage {
             generalFriends.add(getUserOne(fId));
         }
         return generalFriends;
+    }
+
+    @Override
+    public void deleteUser(int userId) {
+
+        String sql = "DELETE FROM FilmLikes " +
+                "WHERE film_id =?";
+        jdbcTemplate.update(sql, userId);
+
+        sql = "DELETE FROM Friendship " +
+                "WHERE friend_id =?";
+        jdbcTemplate.update(sql, userId);
+
+        sql = "DELETE FROM Friendship " +
+                "WHERE user_id =?";
+        jdbcTemplate.update(sql, userId);
+
+        sql = "DELETE FROM userFilmorate " +
+                "WHERE id =?";
+        jdbcTemplate.update(sql, userId);
+
     }
 }

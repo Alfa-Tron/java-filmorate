@@ -14,9 +14,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import javax.persistence.EntityNotFoundException;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -41,7 +39,7 @@ public class FilmDbStorage implements FilmStorage {
             ps.setString(2, film.getDescription());
             ps.setString(3, String.valueOf(film.getReleaseDate()));
             ps.setLong(4, film.getDuration());
-            ps.setDouble(5, film.getRate());
+            ps.setDouble(5, 0);
             ps.setInt(6, film.getMpa().getId());
             return ps;
         }, keyHolder);
@@ -148,13 +146,12 @@ public class FilmDbStorage implements FilmStorage {
             jdbcTemplate.update(sqlMpa, film.getMpa().getId(), film.getId());
         }
 
-        String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?,RATE =? , MPA =? WHERE id =  " + film.getId();
+        String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?, MPA =? WHERE id =  " + film.getId();
         int t = jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
-                film.getRate(),
                 film.getMpa().getId());
 
 
@@ -202,5 +199,20 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
+    @Override
+    public void deleteFilm(int filmId) {
+
+        String sql = "DELETE FROM FilmGenre WHERE film_id =?";
+        jdbcTemplate.update(sql, filmId);
+
+        sql = "DELETE FROM FilmLikes WHERE film_id =?";
+        jdbcTemplate.update(sql, filmId);
+
+        sql = "DELETE FROM Film WHERE id =?";
+        jdbcTemplate.update(sql, filmId);
+
+        log.info("Фильм с id '{}' удален", filmId);
+
+    }
 
 }

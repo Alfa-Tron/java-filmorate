@@ -52,5 +52,9 @@ public class UserService {
         return userStorage.getGeneralFriends(id, friendId);
     }
 
+    public void deleteUser(int userId) {
+        userStorage.deleteUser(userId);
+    }
+
 }
 
