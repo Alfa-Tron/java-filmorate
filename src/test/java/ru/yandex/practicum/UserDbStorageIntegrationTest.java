@@ -33,15 +33,12 @@ class UserDbStorageIntegrationTest {
 
     @Test
     public void testRegisterUser() {
-
         User user = new User();
         user.setName("John Doe");
         user.setLogin("johndoe");
         user.setEmail("johndoe@example.com");
         user.setBirthday(LocalDate.of(1990, 1, 1));
-
         User registeredUser = userStorage.register(user);
-
         Assertions.assertNotNull(registeredUser.getId());
         assertThat(user.getId()).isEqualTo(1);
     }
