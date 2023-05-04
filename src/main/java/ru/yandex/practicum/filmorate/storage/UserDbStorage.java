@@ -110,7 +110,7 @@ public class UserDbStorage implements UserStorage {
     public Collection<User> getFriends(int id) {
         String sql = "SELECT COUNT(*) FROM userFilmorate WHERE id = ?";
         int count = jdbcTemplate.queryForObject(sql, Integer.class, id);
-        if(count == 0) throw new EntityNotFoundException("111");
+        if (count == 0) throw new EntityNotFoundException("Friend не найден");
         SqlRowSet userRowsFr = jdbcTemplate.queryForRowSet("select FRIEND_ID, STATUS from FRIENDSHIP where USER_ID = ?", id);
         Set<User> friends = new HashSet<>();
         while (userRowsFr.next()) {
