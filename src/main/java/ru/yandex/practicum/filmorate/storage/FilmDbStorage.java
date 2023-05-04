@@ -251,7 +251,7 @@ public class FilmDbStorage implements FilmStorage {
 
     private void filmValidation(Film film) {
         if (film.getName() == null || film.getName().isEmpty()) {
-            throw new ValidationException("Ошибка регистрации названия фильма.");
+            throw new ValidationException("Ошибка регистрации названия фильма");
         } else if (film.getDescription() == null || film.getDescription().length() > 200) {
             throw new ValidationException("Ошибка регистрации описания фильма.");
         } else if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(DATE_OF_FIRST_FILM)) {
