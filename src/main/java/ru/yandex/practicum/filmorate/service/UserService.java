@@ -11,14 +11,11 @@ import java.util.*;
 @Slf4j
 @Service
 public class UserService {
-
-
     private final UserStorage userStorage;
 
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
-
 
     public User register(User user) {
         return userStorage.register(user);
@@ -51,6 +48,5 @@ public class UserService {
     public List<User> getGeneralFriends(int id, int friendId) {
         return userStorage.getGeneralFriends(id, friendId);
     }
-
 }
 

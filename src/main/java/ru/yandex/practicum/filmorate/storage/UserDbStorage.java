@@ -26,13 +26,11 @@ public class UserDbStorage implements UserStorage {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("email", user.getEmail())
                 .addValue("login", user.getLogin())
                 .addValue("name", user.getName())
                 .addValue("birthday", user.getBirthday());
-
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("USERFILMORATE").usingGeneratedKeyColumns("ID");
         Number key = jdbcInsert.executeAndReturnKey(parameters);
         user.setId(key.intValue());
@@ -44,7 +42,6 @@ public class UserDbStorage implements UserStorage {
     public User getUserOne(int id) {
         String userSql = "SELECT * FROM USERFILMORATE WHERE id = ?";
         String friendSql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = true";
-
         User user = jdbcTemplate.queryForObject(userSql, new Object[]{id}, (rs, rowNum) -> {
             User u = new User();
             u.setId(rs.getInt("id"));
@@ -54,15 +51,14 @@ public class UserDbStorage implements UserStorage {
             u.setBirthday(rs.getDate("birthday").toLocalDate());
             return u;
         });
-            Set<Integer> friends = jdbcTemplate.query(friendSql, ps -> ps.setInt(1, id), rsFr -> {
-                Set<Integer> set = new HashSet<>();
-                while (rsFr.next()) {
-                    set.add(rsFr.getInt("FRIEND_ID"));
-                }
-                return set;
-            });
-            user.setFriends(friends);
-
+        Set<Integer> friends = jdbcTemplate.query(friendSql, ps -> ps.setInt(1, id), rsFr -> {
+            Set<Integer> set = new HashSet<>();
+            while (rsFr.next()) {
+                set.add(rsFr.getInt("FRIEND_ID"));
+            }
+            return set;
+        });
+        user.setFriends(friends);
         return user;
     }
 
@@ -73,7 +69,6 @@ public class UserDbStorage implements UserStorage {
         while (userRows.next()) {
             users.add(getUserOne(userRows.getInt("ID")));
         }
-
         return users;
     }
 
@@ -93,16 +88,16 @@ public class UserDbStorage implements UserStorage {
         if (id < 0 || friendId < 0) throw new EntityNotFoundException("Пользователя с таким id нет");
         jdbcTemplate.update("INSERT INTO FRIENDSHIP (USER_ID, FRIEND_ID, STATUS) VALUES (?, ?, ?)",
                 id, friendId, false);
-        jdbcTemplate.update("UPDATE FRIENDSHIP SET STATUS = ? WHERE (USER_ID = ? AND FRIEND_ID = ?) OR (USER_ID = ? AND FRIEND_ID = ?)",
+        jdbcTemplate.update("UPDATE FRIENDSHIP SET STATUS = ?" +
+                        " WHERE (USER_ID = ? AND FRIEND_ID = ?) OR (USER_ID = ? AND FRIEND_ID = ?)",
                 true, id, friendId, friendId, id);
-
-
         return getUserOne(id);
     }
 
     @Override
     public User deleteFriend(int id, int friendId) {
-        jdbcTemplate.update("DELETE FROM FRIENDSHIP WHERE (USER_ID=? AND FRIEND_ID=?)OR(USER_ID=? AND FRIEND_ID=?)", id, friendId, id, friendId);
+        jdbcTemplate.update("DELETE FROM FRIENDSHIP WHERE" +
+                " (USER_ID=? AND FRIEND_ID=?)OR(USER_ID=? AND FRIEND_ID=?)", id, friendId, id, friendId);
         return getUserOne(id);
     }
 
@@ -115,7 +110,6 @@ public class UserDbStorage implements UserStorage {
                 friends.add(getUserOne(userRowsFr.getInt("FRIEND_ID")));
             }
         }
-
         return friends;
     }
 
@@ -123,7 +117,6 @@ public class UserDbStorage implements UserStorage {
     public List<User> getGeneralFriends(int id, int friendId) {
         String sql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND FRIEND_ID IN (SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ?)";
         List<Integer> friendIds = jdbcTemplate.queryForList(sql, Integer.class, id, friendId);
-
         List<User> generalFriends = new ArrayList<>();
         for (int fId : friendIds) {
             generalFriends.add(getUserOne(fId));
