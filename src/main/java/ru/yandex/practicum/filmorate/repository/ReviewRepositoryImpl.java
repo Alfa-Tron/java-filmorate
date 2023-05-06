@@ -27,8 +27,8 @@ class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public Long addReview(Review review) {
-        String sql = "INSERT INTO REVIEWS (CONTENT, IS_POSITIVE, USEFUL, FILM_ID, USER_ID) "
-                + "VALUES(?, ?, 0, ?, ?)";
+        String sql = "INSERT INTO REVIEWS (CONTENT, IS_POSITIVE, FILM_ID, USER_ID) "
+                + "VALUES(?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql, new String[]{"REVIEW_ID"});
@@ -43,15 +43,14 @@ class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public void updateReview(Review review) {
-        String sql = "UPDATE REVIEWS SET CONTENT=?, IS_POSITIVE=?, USEFUL=?, FILM_ID=?, USER_ID=? WHERE REVIEW_ID=?";
+        String sql = "UPDATE REVIEWS SET CONTENT=?, IS_POSITIVE=?, FILM_ID=?, USER_ID=? WHERE REVIEW_ID=?";
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, review.getContent());
             statement.setBoolean(2, review.isPositive());
-            statement.setLong(3, review.getUseful());
-            statement.setLong(4, review.getFilmId());
-            statement.setLong(5, review.getUserId());
-            statement.setLong(6, review.getReviewId());
+            statement.setLong(3, review.getFilmId());
+            statement.setLong(4, review.getUserId());
+            statement.setLong(5, review.getReviewId());
             return statement;
         });
     }
@@ -64,40 +63,79 @@ class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public Review getReviewById(Long reviewId) {
-        String sql = "SELECT REVIEW_ID, CONTENT, IS_POSITIVE, USEFUL, FILM_ID, USER_ID FROM REVIEWS WHERE REVIEW_ID=?";
+        String sql = "SELECT " +
+                "REVIEWS.*, " +
+                "sum( " +
+                "case LIKEREVIEWS.IS_POSITIVE " +
+                "when TRUE then 1 " +
+                "WHEN FALSE THEN -1 " +
+                "else 0 END " +
+                ") AS USEFUL " +
+                "FROM REVIEWS " +
+                "LEFT JOIN LIKEREVIEWS ON LIKEREVIEWS.REVIEW_ID = REVIEWS.REVIEW_ID " +
+                "WHERE REVIEWS.REVIEW_ID = ? " +
+                "GROUP BY REVIEWS.REVIEW_ID";
         return jdbcTemplate.queryForObject(sql, REVIEW_MAPPER, reviewId);
     }
 
     @Override
     public Collection<Review> getAllReviews(Long count) {
-        String sql = "SELECT * FROM REVIEW ORDER BY USEFUL LIMIT ?";
+        String sql = "SELECT " +
+                "REVIEWS.*, " +
+                "sum( " +
+                "case LIKEREVIEWS.IS_POSITIVE " +
+                "when TRUE then 1 " +
+                "WHEN FALSE THEN -1 " +
+                "else 0 END " +
+                ") AS USEFUL " +
+                "FROM REVIEWS " +
+                "LEFT JOIN LIKEREVIEWS ON LIKEREVIEWS.REVIEW_ID = REVIEWS.REVIEW_ID " +
+                "GROUP BY REVIEWS.REVIEW_ID " +
+                "LIMIT ?";
         return jdbcTemplate.query(sql, REVIEW_MAPPER, count);
     }
 
     @Override
     public Collection<Review> getAllReviews(Integer filmId, Long count) {
-        String sql = "SELECT * FROM REVIEW WHERE FILM_ID = ? ORDER BY USEFUL LIMIT ?";
+        String sql = "SELECT " +
+                "REVIEWS.*, " +
+                "sum( " +
+                "case LIKEREVIEWS.IS_POSITIVE " +
+                "when TRUE then 1 " +
+                "WHEN FALSE THEN -1 " +
+                "else 0 END " +
+                ") AS USEFUL " +
+                "FROM REVIEWS " +
+                "LEFT JOIN LIKEREVIEWS ON LIKEREVIEWS.REVIEW_ID = REVIEWS.REVIEW_ID " +
+                "WHERE REVIEWS.FILM_ID = ? " +
+                "GROUP BY REVIEWS.REVIEW_ID " +
+                "LIMIT ?";
         return jdbcTemplate.query(sql, REVIEW_MAPPER, filmId, count);
     }
 
-    // TODO: 01.05.2023 Разобраться далее
     @Override
     public void likeReview(Long reviewId, Integer userId) {
-        String sql = "";
+        String sql = "MERGE INTO LIKEREVIEWS (REVIEW_ID, USER_ID, IS_POSITIVE)"
+                + "VALUES(?, ?, ?)";
+        jdbcTemplate.update(sql, reviewId, userId, true);
     }
 
     @Override
     public void dislikeReview(Long reviewId, Integer userId) {
-
+        String sql = "MERGE INTO LIKEREVIEWS (REVIEW_ID, USER_ID, IS_POSITIVE)"
+                + "VALUES(?, ?, ?)";
+        jdbcTemplate.update(sql, reviewId, userId, false);
     }
 
     @Override
     public void deleteLikeReview(Long reviewId, Integer userId) {
-
+        String sql = "DELETE FROM LIKEREVIEWS WHERE REVIEW_ID=? AND USER_ID=? AND IS_POSITIVE = true";
+        jdbcTemplate.update(sql, reviewId, userId);
     }
 
     @Override
     public void deleteDislikeReview(Long reviewId, Integer userId) {
-
+        String sql = "DELETE FROM LIKEREVIEWS WHERE REVIEW_ID=? AND USER_ID=? AND IS_POSITIVE = false";
+        jdbcTemplate.update(sql, reviewId, userId);
     }
 }
