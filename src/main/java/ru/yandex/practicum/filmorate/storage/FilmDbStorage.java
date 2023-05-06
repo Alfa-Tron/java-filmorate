@@ -110,8 +110,6 @@ public class FilmDbStorage implements FilmStorage, Search {
         if (director.equals("") && title.equals("title")) {
             sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
-                    //"INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
-                    //"INNER JOIN Directors d ON d.id = fd.directors_id " +
                     "WHERE lower(f.film_name) LIKE lower('%" + query + "%') " +
                     "ORDER BY f.rate";
             return jdbcTemplate.query(sql, new Object[]{},
