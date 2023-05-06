@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface FeedStorage {
     void addFeed(Integer entityId, Integer userId, long timeStamp, EventType eventType, OperationType operation);
+
     List<Feed> getFeed(int id);
 }
