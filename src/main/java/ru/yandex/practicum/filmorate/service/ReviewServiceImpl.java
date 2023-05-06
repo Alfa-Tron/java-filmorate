@@ -35,8 +35,7 @@ class ReviewServiceImpl implements ReviewService {
         checkFilm(review.getFilmId());
         checkUser(review.getUserId());
         checkReview(review.getReviewId());
-        repository.updateReview(review);
-        return review;
+        return repository.updateReview(review);
     }
 
     @Override
@@ -67,28 +66,28 @@ class ReviewServiceImpl implements ReviewService {
     public void likeReview(Long reviewId, Integer userId) {
         checkReview(reviewId);
         checkUser(userId);
-        repository.likeReview(reviewId,userId);
+        repository.likeReview(reviewId, userId);
     }
 
     @Override
     public void dislikeReview(Long reviewId, Integer userId) {
         checkReview(reviewId);
         checkUser(userId);
-        repository.dislikeReview(reviewId,userId);
+        repository.dislikeReview(reviewId, userId);
     }
 
     @Override
     public void deleteLikeReview(Long reviewId, Integer userId) {
         checkReview(reviewId);
         checkUser(userId);
-        repository.deleteLikeReview(reviewId,userId);
+        repository.deleteLikeReview(reviewId, userId);
     }
 
     @Override
     public void deleteDislikeReview(Long reviewId, Integer userId) {
         checkReview(reviewId);
         checkUser(userId);
-        repository.deleteDislikeReview(reviewId,userId);
+        repository.deleteDislikeReview(reviewId, userId);
     }
 
     private void checkFilm(Integer filmId) {

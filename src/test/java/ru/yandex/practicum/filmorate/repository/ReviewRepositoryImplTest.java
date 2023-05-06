@@ -89,12 +89,20 @@ class ReviewRepositoryImplTest {
     public void updateReview() {
         Review review = Objects.requireNonNull(reviewRepository.getReviewById(reviewId));
         String content = "content";
-        reviewRepository.updateReview(review.toBuilder().content(content).isPositive(false).build());
+        reviewRepository.updateReview(review.toBuilder()
+                .content(content)
+                .isPositive(false)
+                .filmId(-1)
+                .userId(-1)
+                .build()
+        );
         Review reviewById = reviewRepository.getReviewById(review.getReviewId());
 
         Assertions.assertNotNull(reviewById);
         Assertions.assertEquals(content, reviewById.getContent());
-        Assertions.assertFalse(reviewById.isPositive());
+        Assertions.assertEquals(review.getFilmId(), reviewById.getFilmId());
+        Assertions.assertEquals(review.getUserId(), reviewById.getUserId());
+        Assertions.assertFalse(reviewById.getIsPositive());
     }
 
     @Test

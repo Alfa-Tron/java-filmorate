@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.sql.PreparedStatement;
@@ -42,17 +43,17 @@ class ReviewRepositoryImpl implements ReviewRepository {
     }
 
     @Override
-    public void updateReview(Review review) {
-        String sql = "UPDATE REVIEWS SET CONTENT=?, IS_POSITIVE=?, FILM_ID=?, USER_ID=? WHERE REVIEW_ID=?";
+    @Transactional
+    public Review updateReview(Review review) {
+        String sql = "UPDATE REVIEWS SET CONTENT=?, IS_POSITIVE=? WHERE REVIEW_ID=?";
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, review.getContent());
             statement.setBoolean(2, review.getIsPositive());
-            statement.setLong(3, review.getFilmId());
-            statement.setLong(4, review.getUserId());
-            statement.setLong(5, review.getReviewId());
+            statement.setLong(3, review.getReviewId());
             return statement;
         });
+        return getReviewById(review.getReviewId());
     }
 
     @Override
@@ -91,6 +92,7 @@ class ReviewRepositoryImpl implements ReviewRepository {
                 "FROM REVIEWS " +
                 "LEFT JOIN LIKEREVIEWS ON LIKEREVIEWS.REVIEW_ID = REVIEWS.REVIEW_ID " +
                 "GROUP BY REVIEWS.REVIEW_ID " +
+                "ORDER BY USEFUL DESC " +
                 "LIMIT ?";
         return jdbcTemplate.query(sql, REVIEW_MAPPER, count);
     }
@@ -109,6 +111,7 @@ class ReviewRepositoryImpl implements ReviewRepository {
                 "LEFT JOIN LIKEREVIEWS ON LIKEREVIEWS.REVIEW_ID = REVIEWS.REVIEW_ID " +
                 "WHERE REVIEWS.FILM_ID = ? " +
                 "GROUP BY REVIEWS.REVIEW_ID " +
+                "ORDER BY USEFUL DESC " +
                 "LIMIT ?";
         return jdbcTemplate.query(sql, REVIEW_MAPPER, filmId, count);
     }
