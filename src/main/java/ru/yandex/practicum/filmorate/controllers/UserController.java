@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -18,10 +18,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
+
     private UserService userService;
-    @Autowired
     private FeedService feedService;
+
+    public UserController(@Qualifier("userService") UserService userService, @Qualifier("feedService") FeedService feedService) {
+        this.userService = userService;
+        this.feedService = feedService;
+    }
+
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
@@ -67,6 +72,7 @@ public class UserController {
     public List<Feed> getFeed(@PathVariable int id) throws Exception {
         return feedService.getFeed(id);
     }
+
     @GetMapping("/{id}/recommendations")
     public Collection<Film> getRecommendation(@PathVariable int id) {
         return userService.getRecommendation(id);

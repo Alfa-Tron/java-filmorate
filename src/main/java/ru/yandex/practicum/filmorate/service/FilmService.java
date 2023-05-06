@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.time.Instant;
 import java.util.Collection;
@@ -22,11 +24,14 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final FeedStorage feedStorage;
+    private final UserStorage userStorage;
 
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
-                       @Qualifier("feedDbStorage") FeedStorage feedStorage) {
+                       @Qualifier("feedDbStorage") FeedStorage feedStorage,
+                       @Qualifier("userDbStorage") UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.feedStorage = feedStorage;
+        this.userStorage = userStorage;
     }
 
     public Film update(Film film) {
@@ -51,12 +56,22 @@ public class FilmService {
     }
 
     public Film addLike(int filmId, int userId) {
-        feedStorage.addFeed(filmId, userId, Instant.now().toEpochMilli(), LIKE, ADD);
+        if (filmStorage.getFilm(filmId) == null || userStorage.getUserOne(userId) == null) {
+            log.warn("Получен некорректный идентификатор");
+            throw new EntityNotFoundException();
+        } else {
+            feedStorage.addFeed(filmId, userId, Instant.now().toEpochMilli(), LIKE, ADD);
+        }
         return filmStorage.addLike(filmId, userId);
     }
 
     public Film deleteLike(int filmId, int userId) {
-        feedStorage.addFeed(filmId, userId, Instant.now().toEpochMilli(), LIKE, REMOVE);
+        if (filmStorage.getFilm(filmId) == null || userStorage.getUserOne(userId) == null) {
+            log.warn("Получен некорректный идентификатор");
+            throw new EntityNotFoundException();
+        } else {
+            feedStorage.addFeed(filmId, userId, Instant.now().toEpochMilli(), LIKE, REMOVE);
+        }
         return filmStorage.deleteLike(filmId, userId);
     }
 

@@ -22,7 +22,7 @@ public class FeedService {
     }
 
     public List<Feed> getFeed(int id) throws Exception {
-        if (userStorage.getUserOne(id) == null){
+        if (userStorage.getUserOne(id) == null) {
             log.warn("Пользователь не существует");
             throw new Exception("Пользователь не существует");
         }

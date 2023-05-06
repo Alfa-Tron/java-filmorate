@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -45,12 +47,22 @@ public class UserService {
     }
 
     public User addFriend(int id, int friendId) {
-        feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, ADD);
+        if (userStorage.getUserOne(id) == null || userStorage.getUserOne(friendId) == null) {
+            log.warn("Получен некорректный идентификатор");
+            throw new EntityNotFoundException();
+        } else {
+            feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, ADD);
+        }
         return userStorage.addFriend(id, friendId);
     }
 
     public User deleteFriend(int id, int friendId) {
-        feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, REMOVE);
+        if (userStorage.getUserOne(id) == null || userStorage.getUserOne(friendId) == null) {
+            log.warn("Получен некорректный идентификатор");
+            throw new EntityNotFoundException();
+        } else {
+            feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, REMOVE);
+        }
         return userStorage.deleteFriend(id, friendId);
     }
 
@@ -63,7 +75,7 @@ public class UserService {
     }
 
     public Collection<Film> getRecommendation(int id) {
-        return  new ArrayList<>(userStorage.getRecommendation(id));
+        return new ArrayList<>(userStorage.getRecommendation(id));
     }
 }
 
