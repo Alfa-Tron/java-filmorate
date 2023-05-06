@@ -33,7 +33,7 @@ class ReviewRepositoryImpl implements ReviewRepository {
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql, new String[]{"REVIEW_ID"});
             statement.setString(1, review.getContent());
-            statement.setBoolean(2, review.isPositive());
+            statement.setBoolean(2, review.getIsPositive());
             statement.setLong(3, review.getFilmId());
             statement.setLong(4, review.getUserId());
             return statement;
@@ -47,7 +47,7 @@ class ReviewRepositoryImpl implements ReviewRepository {
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, review.getContent());
-            statement.setBoolean(2, review.isPositive());
+            statement.setBoolean(2, review.getIsPositive());
             statement.setLong(3, review.getFilmId());
             statement.setLong(4, review.getUserId());
             statement.setLong(5, review.getReviewId());
