@@ -4,21 +4,28 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+
+import static ru.yandex.practicum.filmorate.enums.EventType.FRIEND;
+import static ru.yandex.practicum.filmorate.enums.OperationType.ADD;
+import static ru.yandex.practicum.filmorate.enums.OperationType.REMOVE;
 
 @Slf4j
 @Service
 public class UserService {
 
-
     private final UserStorage userStorage;
+    private final FeedStorage feedStorage;
 
-    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, @Qualifier("feedDbStorage") FeedStorage feedStorage) {
         this.userStorage = userStorage;
+        this.feedStorage = feedStorage;
     }
-
 
     public User register(User user) {
         return userStorage.register(user);
@@ -37,10 +44,12 @@ public class UserService {
     }
 
     public User addFriend(int id, int friendId) {
+        feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, ADD);
         return userStorage.addFriend(id, friendId);
     }
 
     public User deleteFriend(int id, int friendId) {
+        feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, REMOVE);
         return userStorage.deleteFriend(id, friendId);
     }
 

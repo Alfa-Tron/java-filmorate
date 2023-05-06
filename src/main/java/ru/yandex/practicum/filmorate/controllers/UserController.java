@@ -3,11 +3,15 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -15,6 +19,8 @@ import java.util.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private FeedService feedService;
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
@@ -56,5 +62,8 @@ public class UserController {
         return userService.getGeneralFriends(id, otherId);
     }
 
-
+    @GetMapping("/{id}/feed")
+    public List<Feed> getFeed(@PathVariable int id) throws Exception {
+        return feedService.getFeed(id);
+    }
 }
