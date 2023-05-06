@@ -1,14 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 import org.springframework.lang.NonNull;
 
 @Builder(toBuilder = true)
 @RequiredArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Jacksonized
 @Getter
 public class Review {
     private Long reviewId;
