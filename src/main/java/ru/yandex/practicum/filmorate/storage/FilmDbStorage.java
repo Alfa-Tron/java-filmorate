@@ -20,7 +20,7 @@ import java.util.*;
 
 @Repository
 @Slf4j
-public class FilmDbStorage implements FilmStorage {
+public class FilmDbStorage implements FilmStorage, Search {
     private final JdbcTemplate jdbcTemplate;
     private static final LocalDate DATE_OF_FIRST_FILM = LocalDate.of(1895, Month.DECEMBER, 28);
 
@@ -75,6 +75,54 @@ public class FilmDbStorage implements FilmStorage {
         }
         return getFilm(film.getId());
     }
+
+
+    @Override
+    public Collection<Film> searchByTitleOrDirector(String query, String director, String title) {
+        String sql;
+        if (director.equals("director") && title.equals("title")) {
+            sql = "SELECT r.id, r.film_name, r.description, r.releaseDate, r.duration, r.rate " +
+                    "FROM (SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
+                    "FROM film f " +
+                    "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
+                    "INNER JOIN Directors d ON d.id = fd.directors_id " +
+                    "WHERE lower(d.name) LIKE lower('%" + query + "%')" +
+                    " UNION " +
+                    "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
+                    "FROM film f " +
+                    "WHERE lower(f.film_name) LIKE lower('%" + query + "%')) r " +
+                    "ORDER BY r.rate";
+
+            return jdbcTemplate.query(sql, new Object[]{},
+                    (rs, rowNum) -> getFilm(rs.getInt("id")));
+
+        }
+        if (director.equals("director") && title.equals("")) {
+            sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
+                    "FROM film f " +
+                    "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
+                    "INNER JOIN Directors d ON d.id = fd.directors_id " +
+                    "WHERE  lower(d.name)  LIKE lower('%" + query + "%') " +
+                    "ORDER BY f.rate";
+            return jdbcTemplate.query(sql, new Object[]{},
+                    (rs, rowNum) -> getFilm(rs.getInt("id")));
+        }
+        if (director.equals("") && title.equals("title")) {
+            sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
+                    "FROM film f " +
+                    //"INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
+                    //"INNER JOIN Directors d ON d.id = fd.directors_id " +
+                    "WHERE lower(f.film_name) LIKE lower('%" + query + "%') " +
+                    "ORDER BY f.rate";
+            return jdbcTemplate.query(sql, new Object[]{},
+                    (rs, rowNum) -> getFilm(rs.getInt("id")));
+        } else {
+            return new ArrayList<>();
+        }
+
+
+    }
+
 
     @Override
     public Collection<Film> getSortedDirectorsByYear(Integer directorId) {

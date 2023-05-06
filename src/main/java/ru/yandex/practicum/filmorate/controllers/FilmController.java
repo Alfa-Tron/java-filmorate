@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -19,6 +20,11 @@ public class FilmController {
     @PostMapping("/films")
     public Film addFilm(@RequestBody @Valid Film film) {
         return filmService.addFilm(film);
+    }
+
+    @GetMapping("/films/search")
+    public Collection<Film> searchByTitleOrDirector(@RequestParam(name = "query") String query, @RequestParam(name = "by") List<String> by) {
+        return filmService.searchByTitleOrDirector(query, by);
     }
 
     @GetMapping("/films/director/{directorId}")
