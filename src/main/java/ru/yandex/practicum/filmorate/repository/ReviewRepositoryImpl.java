@@ -53,7 +53,7 @@ class ReviewRepositoryImpl implements ReviewRepository {
             statement.setLong(3, review.getReviewId());
             return statement;
         });
-        return getReviewById(review.getReviewId());
+        return Objects.requireNonNull(getReviewById(review.getReviewId()));
     }
 
     @Override

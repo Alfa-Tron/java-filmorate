@@ -10,6 +10,7 @@ public interface ReviewRepository {
     @NonNull
     Long addReview(@NonNull Review review);
 
+    @NonNull
     Review updateReview(@NonNull Review review);
 
     void deleteReview(@NonNull Long reviewId);
