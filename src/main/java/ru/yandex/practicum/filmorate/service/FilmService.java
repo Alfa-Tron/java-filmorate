@@ -6,9 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-
 import javax.validation.ValidationException;
-import java.util.*;
+import java.util.Collection;
 
 
 @Slf4j
@@ -60,8 +59,13 @@ public class FilmService {
         return filmStorage.getPopularityFilms(count);
     }
 
+
     public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
         return filmStorage.mostPopularFilms(count, genreId, year);
+    }
+
+    public Collection<Film> getCommonFilms(int userId, int friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }
 

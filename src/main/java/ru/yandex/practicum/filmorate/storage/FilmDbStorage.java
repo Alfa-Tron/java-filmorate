@@ -192,12 +192,23 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addLike(int filmId, int userId) {
-        String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
+        String selectQuery = "SELECT COUNT(*) FROM filmLikes WHERE film_id = ? AND user_id = ?";
+        int count = jdbcTemplate.queryForObject(selectQuery, Integer.class, filmId, userId);
+        if (count == 0) {
+            String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
+            int t = jdbcTemplate.update(query, filmId, userId);
+            String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
+            int t1 = jdbcTemplate.update(sql, filmId);
+            if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
+            return getFilm(filmId);
+        }
+      /*  String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
         int t = jdbcTemplate.update(query, filmId, userId);
         String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
         int t1 = jdbcTemplate.update(sql, filmId);
         if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
-        return getFilm(filmId);
+        return getFilm(filmId);*/
+        return null;
     }
 
     @Override
@@ -315,3 +326,22 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 }
+
+    @Override
+    public Collection<Film> getCommonFilms(int userId, int friendId) {
+        List<Film> films = new ArrayList<>();
+        String sql = "SELECT f.*, M.* " +
+                "FROM FILMLIKES " +
+                "JOIN FILMLIKES fl ON fl.FILM_ID = FILMLIKES.FILM_ID " +
+                "JOIN FILM f on f.ID = fl.FILM_ID " +
+                "JOIN MPA M on f.ID = M.ID " +
+                "WHERE fl.USER_ID = ? AND FILMLIKES.USER_ID = ?" +
+                "ORDER BY f.RATE desc ";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, userId, friendId);
+        while (sqlRowSet.next()) {
+            films.add(getFilm(sqlRowSet.getInt("ID")));
+        }
+        return films;
+    }
+}
+
