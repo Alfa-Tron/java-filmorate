@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -11,7 +10,6 @@ import javax.validation.Valid;
 import java.util.*;
 
 @Slf4j
-@Component
 public class InMemoryUserStorage implements UserStorage {
     public static final Map<Integer, User> users = new HashMap<>();
 

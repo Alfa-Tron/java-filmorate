@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -20,15 +20,11 @@ import static ru.yandex.practicum.filmorate.enums.OperationType.REMOVE;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
     private final FeedStorage feedStorage;
-
-    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, @Qualifier("feedDbStorage") FeedStorage feedStorage) {
-        this.userStorage = userStorage;
-        this.feedStorage = feedStorage;
-    }
 
     public User register(User user) {
         return userStorage.register(user);

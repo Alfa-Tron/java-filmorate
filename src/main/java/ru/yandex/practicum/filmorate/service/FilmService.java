@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -17,22 +18,14 @@ import static ru.yandex.practicum.filmorate.enums.EventType.LIKE;
 import static ru.yandex.practicum.filmorate.enums.OperationType.ADD;
 import static ru.yandex.practicum.filmorate.enums.OperationType.REMOVE;
 
-
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FilmService {
-
+    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
     private final FeedStorage feedStorage;
     private final UserStorage userStorage;
-
-    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
-                       @Qualifier("feedDbStorage") FeedStorage feedStorage,
-                       @Qualifier("userDbStorage") UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.feedStorage = feedStorage;
-        this.userStorage = userStorage;
-    }
 
     public Film update(Film film) {
         return filmStorage.update(film);

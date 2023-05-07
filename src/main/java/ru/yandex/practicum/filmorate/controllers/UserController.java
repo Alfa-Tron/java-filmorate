@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -17,16 +17,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    private UserService userService;
-    private FeedService feedService;
-
-    public UserController(@Qualifier("userService") UserService userService, @Qualifier("feedService") FeedService feedService) {
-        this.userService = userService;
-        this.feedService = feedService;
-    }
-
+    private final UserService userService;
+    private final FeedService feedService;
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
@@ -69,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/feed")
-    public List<Feed> getFeed(@PathVariable int id) throws Exception {
+    public List<Feed> getFeed(@PathVariable int id) {
         return feedService.getFeed(id);
     }
 

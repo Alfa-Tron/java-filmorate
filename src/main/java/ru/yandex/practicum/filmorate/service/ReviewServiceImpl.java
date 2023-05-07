@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.repository.ReviewRepository;
@@ -19,12 +18,10 @@ import static ru.yandex.practicum.filmorate.enums.OperationType.*;
 @RequiredArgsConstructor
 @Service
 class ReviewServiceImpl implements ReviewService {
+
     private final ReviewRepository repository;
-    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
-    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
-    @Qualifier("feedDbStorage")
     private final FeedStorage feedStorage;
 
     @Override
@@ -51,10 +48,13 @@ class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteReview(Long reviewId) {
-        checkReview(reviewId);
         Review review = repository.getReviewById(reviewId);
-        repository.deleteReview(reviewId);
-        feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, REMOVE);
+        if (review == null) {
+            throw new EntityNotFoundException();
+        } else {
+            repository.deleteReview(reviewId);
+            feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, REMOVE);
+        }
     }
 
     @Override
@@ -120,5 +120,4 @@ class ReviewServiceImpl implements ReviewService {
             throw new EntityNotFoundException();
         }
     }
-
 }
