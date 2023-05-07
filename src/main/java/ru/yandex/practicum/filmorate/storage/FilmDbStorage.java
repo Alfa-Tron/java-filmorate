@@ -325,7 +325,6 @@ public class FilmDbStorage implements FilmStorage {
             throw new ValidationException("Ошибка регистрации длительности фильма.");
         }
     }
-}
 
     @Override
     public Collection<Film> getCommonFilms(int userId, int friendId) {
