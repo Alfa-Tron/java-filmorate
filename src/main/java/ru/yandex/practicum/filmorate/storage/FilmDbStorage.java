@@ -211,12 +211,66 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
+        if (genreId == 0 && year == 0)  return getPopularityFilms(count);
+        else if (genreId == 0 && year != 0) return mostPopularFilmsByYear(count, year);
+        else if (genreId != 0 && year == 0) return mostPopularFilmsByGenre(count, genreId);
+        else return mostPopularFilmsByGenreAndYear(count, genreId, year);
+    }
+
+    @Override
     public Collection<Film> getPopularityFilms(Integer count) {
         List<Film> films = new ArrayList<>();
         String sql = "SELECT id FROM film ORDER BY rate DESC";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
         while (sqlRowSet.next() && count-- > 0) {
             films.add(getFilm(sqlRowSet.getInt("id")));
+        }
+        return films;
+    }
+
+    public Collection<Film> mostPopularFilmsByGenre(int count, int genreId) {
+        String sqlGenreOnly = "SELECT f.id " +
+                "FROM film f " +
+                "LEFT JOIN filmGenre fg ON f.id = fg.film_id " +
+                "WHERE fg.genre_id = ? " +
+                "ORDER BY f.rate DESC " +
+                "LIMIT ?";
+        List<Integer> ids = jdbcTemplate.queryForList(sqlGenreOnly, Integer.class, genreId, count);
+        List<Film> films = new ArrayList<>();
+        for (int id : ids) {
+            films.add(getFilm(id));
+        }
+        return films;
+    }
+
+    public Collection<Film> mostPopularFilmsByYear(int count, int year) {
+        String sqlYearOnly = "SELECT f.id " +
+                "FROM film f " +
+                "LEFT JOIN filmGenre fg ON f.id = fg.film_id " +
+                "WHERE EXTRACT(YEAR FROM f.releaseDate) = ? " +
+                "ORDER BY f.rate DESC " +
+                "LIMIT ?";
+        List<Integer> ids = jdbcTemplate.queryForList(sqlYearOnly, Integer.class,  year, count);
+        Set<Film> films = new HashSet<>();
+        for (int id : ids) {
+            films.add(getFilm(id));
+        }
+        return films;
+    }
+
+    public Collection<Film> mostPopularFilmsByGenreAndYear(int count, int genreId, int year) {
+        String sqlGenreAndYear = "SELECT f.id " +
+                "FROM film f " +
+                "LEFT JOIN filmGenre fg ON f.id = fg.film_id " +
+                "WHERE fg.genre_id = ? " +
+                "AND EXTRACT(YEAR FROM f.releaseDate) = ? " +
+                "ORDER BY f.rate DESC " +
+                "LIMIT ?";
+        List<Integer> ids = jdbcTemplate.queryForList(sqlGenreAndYear, Integer.class, genreId, year, count);
+        List<Film> films = new ArrayList<>();
+        for (int id : ids) {
+            films.add(getFilm(id));
         }
         return films;
     }

@@ -88,6 +88,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
+        return null;
+    }
+
+    @Override
     public Collection<Film> getSortedDirectorsByYear(Integer directorId) {
         return null;
     }
