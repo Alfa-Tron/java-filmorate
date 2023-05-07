@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.util.*;
 
@@ -23,8 +24,11 @@ public class FilmService {
     public Collection<Film> getSortedDirectors(Integer directorId, String sortBy) {
         if (sortBy.equals("year")) {
             return filmStorage.getSortedDirectorsByYear(directorId);
+        } else if (sortBy.equals("likes")) {
+            return filmStorage.getSortedDirectorsByLikes(directorId);
+        } else {
+            throw new EntityNotFoundException("ссылка не найдена.");
         }
-        return filmStorage.getSortedDirectorsByLikes(directorId);
     }
 
     public Film update(Film film) {

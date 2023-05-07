@@ -17,9 +17,10 @@ import java.util.Objects;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class DirectorStorage {
+public class DirectorStorage implements DirectorStorageInterface{
     private final JdbcTemplate jdbcTemplate;
 
+    @Override
     public Directors addNewDirector(Directors director) {
         String sql = "INSERT INTO DIRECTORS (id, name) " +
                 "VALUES (?, ?)";
@@ -34,6 +35,7 @@ public class DirectorStorage {
         return director;
     }
 
+    @Override
     public Directors updateDirector(Directors director) {
         String sqlQuery = "UPDATE DIRECTORS SET NAME = ?";
         jdbcTemplate.update(sqlQuery,
@@ -41,16 +43,19 @@ public class DirectorStorage {
         return getDirectorById(director.getId());
     }
 
+    @Override
     public List<Directors> getAllDirectors() {
         String sqlQuery = "SELECT * FROM DIRECTORS";
         return jdbcTemplate.query(sqlQuery, this::mapRowToDirector);
     }
 
+    @Override
     public Directors getDirectorById(Integer id) {
         String sqlQuery = "SELECT * FROM DIRECTORS WHERE ID = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToDirector, id);
     }
 
+    @Override
     public void deleteDirectorById(Integer id) {
         String sqlDeleteFromDirectors = "DELETE FROM DIRECTORS WHERE ID = ?";
         jdbcTemplate.update(sqlDeleteFromDirectors, id);
