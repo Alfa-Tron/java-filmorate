@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Directors;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -18,15 +20,13 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
-@Repository
+
+@Component
 @Slf4j
+@RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage, Search {
     private final JdbcTemplate jdbcTemplate;
     private static final LocalDate DATE_OF_FIRST_FILM = LocalDate.of(1895, Month.DECEMBER, 28);
-
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public Film addFilm(Film film) {
