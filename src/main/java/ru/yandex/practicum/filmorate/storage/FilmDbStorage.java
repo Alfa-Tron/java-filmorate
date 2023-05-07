@@ -81,7 +81,7 @@ public class FilmDbStorage implements FilmStorage, Search {
     public Collection<Film> searchByTitleOrDirector(String query, String director, String title) {
         String sql;
         if (director.equals("director") && title.equals("title")) {
-            sql = "SELECT r.id, r.film_name, r.description, r.releaseDate, r.duration, r.rate " +
+            sql = "SELECT result.id, result.film_name, result.description, result.releaseDate, result.duration, result.rate " +
                     "FROM (SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
                     "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
@@ -90,8 +90,8 @@ public class FilmDbStorage implements FilmStorage, Search {
                     " UNION " +
                     "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
-                    "WHERE lower(f.film_name) LIKE lower('%" + query + "%')) r " +
-                    "ORDER BY r.rate";
+                    "WHERE lower(f.film_name) LIKE lower('%" + query + "%')) result " +
+                    "ORDER BY result.rate";
 
             return jdbcTemplate.query(sql, new Object[]{},
                     (rs, rowNum) -> getFilm(rs.getInt("id")));
