@@ -100,7 +100,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Collection<Film> getSortedDirectorsByLikes(Integer directorId) {
         return null;
     }
-    
+
     @Override
     public Collection<Film> getCommonFilms(int userId, int friendId) {
         return null;
