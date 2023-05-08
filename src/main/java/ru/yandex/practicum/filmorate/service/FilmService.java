@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.persistence.EntityNotFoundException;
+
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.time.Instant;
 import java.util.Collection;
@@ -28,6 +30,16 @@ public class FilmService {
     private final FeedStorage feedStorage;
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
+
+    public Collection<Film> getSortedDirectors(Integer directorId, String sortBy) {
+        if (sortBy.equals("year")) {
+            return filmStorage.getSortedDirectorsByYear(directorId);
+        } else if (sortBy.equals("likes")) {
+            return filmStorage.getSortedDirectorsByLikes(directorId);
+        } else {
+            throw new EntityNotFoundException("ссылка не найдена.");
+        }
+    }
 
     public Film update(Film film) {
         return filmStorage.update(film);
@@ -74,8 +86,11 @@ public class FilmService {
         return filmStorage.getPopularityFilms(count);
     }
 
+    public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
+        return filmStorage.mostPopularFilms(count, genreId, year);
+    }
+
     public Collection<Film> getCommonFilms(int userId, int friendId) {
         return filmStorage.getCommonFilms(userId, friendId);
     }
 }
-

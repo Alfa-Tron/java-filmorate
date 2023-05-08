@@ -12,14 +12,12 @@ import java.util.Set;
 @Data
 @Entity
 public class Film {
-
     private Integer id;
     @NotNull
     @NotBlank
     private String name;
     @Size(min = 1, max = 200)
     private String description;
-    @PastOrPresent
     @NotNull
     private LocalDate releaseDate;
     @Min(1)
@@ -28,11 +26,10 @@ public class Film {
     private Integer rate = 0;
     private List<Genre> genres = null;
     private Mpa mpa = null;
+    private List<Directors> directors = null;
 
     public boolean dateAfter() {
         LocalDate date = LocalDate.of(1895, 11, 28);
         return releaseDate.isAfter(date);
-
     }
-
 }

@@ -10,7 +10,6 @@ import java.util.Collection;
 
 @Service("genreService")
 public class GenreService {
-
     @Autowired
     private final GenreRepository genreRepository;
 
@@ -25,6 +24,4 @@ public class GenreService {
     public Genre getGenreOne(int id) {
         return genreRepository.getGenreOne(id);
     }
-
-
 }

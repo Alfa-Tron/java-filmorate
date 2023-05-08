@@ -1,10 +1,15 @@
+CREATE TABLE IF NOT EXISTS directors
+(
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+);
 CREATE TABLE IF NOT EXISTS userFilmorate
 (
-    id       INT AUTO_INCREMENT PRIMARY KEY,
-    email    VARCHAR(50),
-    login    VARCHAR(50),
-    name     VARCHAR(50),
-    birthday DATE
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    email     VARCHAR(50),
+    login     VARCHAR(50),
+    name VARCHAR(50),
+    birthday  DATE
 );
 CREATE TABLE IF NOT EXISTS friendship
 (
@@ -61,6 +66,12 @@ CREATE TABLE IF NOT EXISTS filmLikes
     user_id INTEGER REFERENCES userFilmorate (id),
     PRIMARY KEY (film_id, user_id)
 );
+CREATE TABLE IF NOT EXISTS FilmDirectors
+(
+    film_id  INTEGER REFERENCES film (id),
+    directors_id INTEGER REFERENCES directors (id) ON DELETE CASCADE,
+    PRIMARY KEY (film_id, directors_id)
+);
 CREATE TABLE IF NOT EXISTS FilmGenre
 (
     film_id  INTEGER REFERENCES film (id),
@@ -110,3 +121,4 @@ CREATE TABLE IF NOT EXISTS LIKEREVIEWS (
 COMMENT ON COLUMN LIKEREVIEWS.REVIEW_ID IS 'Идентификатор отзыва';
 COMMENT ON COLUMN LIKEREVIEWS.USER_ID IS 'Уникальный идентификатор пользователя';
 COMMENT ON COLUMN LIKEREVIEWS.IS_POSITIVE IS 'Тип лайка (Лайк\\Дизлайк)';
+-- END REVIEWS definition
