@@ -17,7 +17,7 @@ import java.util.Objects;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class DirectorStorage implements DirectorStorageInterface{
+public class DirectorStorage implements DirectorStorageInterface {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
