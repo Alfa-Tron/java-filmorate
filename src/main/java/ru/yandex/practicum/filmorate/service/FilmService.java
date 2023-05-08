@@ -10,7 +10,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.util.*;
 
-
 @Slf4j
 @Service
 public class FilmService {
@@ -63,4 +62,3 @@ public class FilmService {
         return filmStorage.getPopularityFilms(count);
     }
 }
-
