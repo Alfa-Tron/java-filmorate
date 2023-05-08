@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FeedServiceImpl;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -21,7 +21,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final FeedServiceImpl feedServiceImpl;
+    private final FeedService feedServiceImpl;
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
