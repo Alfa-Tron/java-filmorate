@@ -12,14 +12,11 @@ import java.util.*;
 @Slf4j
 @Service
 public class UserService {
-
-
     private final UserStorage userStorage;
 
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
-
 
     public User register(User user) {
         return userStorage.register(user);

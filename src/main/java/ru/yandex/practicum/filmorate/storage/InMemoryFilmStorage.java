@@ -12,13 +12,11 @@ import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-
     public static final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;
 
     @Override
     public Film addFilm(Film film) {
-
         if (film.getId() == null) {
             film.setId(id++);
         }
@@ -46,7 +44,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film update(Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
-
         } else {
             log.error("Фильма с таким id нет");
             throw new EntityNotFoundException("Фильма с таким id нет");
@@ -80,13 +77,28 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Collection<Film> getPopularityFilms(Integer count) {
         if (count == null) count = 10;
         List<Film> result = new ArrayList<>();
-        List<Film> popularityFilms = new ArrayList<Film>(films.values());
+        List<Film> popularityFilms = new ArrayList<>(films.values());
         popularityFilms.sort((o1, o2) -> o2.getLikes().size() - o1.getLikes().size());
 
         for (int i = 0; i < count && i < popularityFilms.size(); i++) {
             result.add(popularityFilms.get(i));
         }
         return result;
+    }
+
+    @Override
+    public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
+        return null;
+    }
+
+    @Override
+    public Collection<Film> getSortedDirectorsByYear(Integer directorId) {
+        return null;
+    }
+
+    @Override
+    public Collection<Film> getSortedDirectorsByLikes(Integer directorId) {
+        return null;
     }
 
     @Override

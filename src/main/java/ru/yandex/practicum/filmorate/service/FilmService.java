@@ -13,11 +13,17 @@ import java.util.Collection;
 @Slf4j
 @Service
 public class FilmService {
-
     private final FilmStorage filmStorage;
 
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
+    }
+
+    public Collection<Film> getSortedDirectors(Integer directorId, String sortBy) {
+        if (sortBy.equals("year")) {
+            return filmStorage.getSortedDirectorsByYear(directorId);
+        }
+        return filmStorage.getSortedDirectorsByLikes(directorId);
     }
 
     public Film update(Film film) {
@@ -35,7 +41,6 @@ public class FilmService {
             log.error("Дата релиза раньше 28 декабря 1895 года");
             throw new ValidationException();
         }
-
     }
 
     public Film getFilm(int id) {
@@ -52,6 +57,11 @@ public class FilmService {
 
     public Collection<Film> getPopularityFilms(Integer count) {
         return filmStorage.getPopularityFilms(count);
+    }
+
+
+    public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
+        return filmStorage.mostPopularFilms(count, genreId, year);
     }
 
     public Collection<Film> getCommonFilms(int userId, int friendId) {

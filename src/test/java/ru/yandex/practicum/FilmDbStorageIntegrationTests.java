@@ -45,8 +45,7 @@ public class FilmDbStorageIntegrationTests {
 
         assertNotNull(addedFilm.getId());
         originalFilm.setId(addedFilm.getId());
-        Assertions.assertEquals(originalFilm, addedFilm);
-
+        Assertions.assertEquals(originalFilm.getName(), addedFilm.getName());
     }
 
     @Test

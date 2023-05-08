@@ -10,17 +10,20 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 @RestController
 @Slf4j
 public class FilmController {
-
     @Autowired
     private FilmService filmService;
 
     @PostMapping("/films")
     public Film addFilm(@RequestBody @Valid Film film) {
         return filmService.addFilm(film);
+    }
+
+    @GetMapping("/films/director/{directorId}")
+    public Collection<Film> getSortedDirectors(@PathVariable int directorId, @RequestParam String sortBy) {
+        return filmService.getSortedDirectors(directorId, sortBy);
     }
 
     @GetMapping("/films")
@@ -49,8 +52,11 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public Collection<Film> getPopularity(@RequestParam(name = "count", defaultValue = "10") int count) {
-        return filmService.getPopularityFilms(count);
+    public Collection<Film> mostPopularFilms(
+            @RequestParam(defaultValue = "10") int count,
+            @RequestParam(defaultValue = "0") int genreId,
+            @RequestParam(defaultValue = "0") int year) {
+        return filmService.mostPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/films/common")
