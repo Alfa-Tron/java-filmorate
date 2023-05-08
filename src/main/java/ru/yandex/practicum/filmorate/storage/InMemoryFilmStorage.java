@@ -87,6 +87,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public void deleteFilm(int id) {
+    }
+
     public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
         return null;
     }

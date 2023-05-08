@@ -41,7 +41,7 @@ public class FilmDbStorage implements FilmStorage, Search {
             ps.setString(2, film.getDescription());
             ps.setString(3, String.valueOf(film.getReleaseDate()));
             ps.setLong(4, film.getDuration());
-            ps.setDouble(5, film.getRate());
+            ps.setDouble(5, 0);
             ps.setInt(6, film.getMpa().getId());
             return ps;
         }, keyHolder);
@@ -217,13 +217,12 @@ public class FilmDbStorage implements FilmStorage, Search {
     public Film update(Film film) {
         filmValidation(film);
         String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?," +
-                " DURATION = ?, RATE = ?, MPA = ? WHERE ID = " + film.getId();
+                " DURATION = ?, MPA = ? WHERE ID = " + film.getId();
         jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
-                film.getRate(),
                 film.getMpa().getId());
         Optional<List<Genre>> filmGenres = Optional.ofNullable(film.getGenres());
         setGenresToFilm(filmGenres, film.getId());
@@ -244,12 +243,7 @@ public class FilmDbStorage implements FilmStorage, Search {
             if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
             return getFilm(filmId);
         }
-      /*  String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
-        int t = jdbcTemplate.update(query, filmId, userId);
-        String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
-        int t1 = jdbcTemplate.update(sql, filmId);
-        if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
-        return getFilm(filmId);*/
+
         return null;
     }
 
@@ -328,6 +322,13 @@ public class FilmDbStorage implements FilmStorage, Search {
         return films;
     }
 
+    @Override
+    public void deleteFilm(int filmId) {
+        var sql = "DELETE FROM Film WHERE id =?";
+        jdbcTemplate.update(sql, filmId);
+        log.info("Фильм с id '{}' удален", filmId);
+    }
+
     private void setDirectorsToFilm(Optional<List<Directors>> filmDirectors, int filmId) {
         String sqlQuery = "DELETE FROM FILMDIRECTORS WHERE FILM_ID = ?";
         List<Directors> directorsAsList = new ArrayList<>();
@@ -385,4 +386,3 @@ public class FilmDbStorage implements FilmStorage, Search {
         return films;
     }
 }
-
