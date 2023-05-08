@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -26,4 +27,6 @@ public interface UserStorage {
     List<User> getGeneralFriends(int id, int friendId);
 
     void deleteUser(int userId);
+    
+    Collection<Film> getRecommendation(int id);
 }
