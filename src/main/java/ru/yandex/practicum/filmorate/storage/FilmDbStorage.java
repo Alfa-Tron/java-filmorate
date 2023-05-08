@@ -175,7 +175,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film update(Film film) {
         filmValidation(film);
         String sql = "UPDATE FILM SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?," +
-                " DURATION = ?, RATE = ?, MPA = ? WHERE ID = " + film.getId();
+                " DURATION = ?, MPA = ? WHERE ID = " + film.getId();
         jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
