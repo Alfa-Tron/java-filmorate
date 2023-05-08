@@ -4,16 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Directors;
-import ru.yandex.practicum.filmorate.service.DirectorService;
+import ru.yandex.practicum.filmorate.service.DirectorServiceInterface;
 
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
 @Slf4j
+@AllArgsConstructor
 @RequestMapping("/directors")
 public class DirectorController {
-    private final DirectorService directorService;
+    private final DirectorServiceInterface directorService;
 
     @PostMapping
     public Directors addNewDirector(@RequestBody Directors director) {

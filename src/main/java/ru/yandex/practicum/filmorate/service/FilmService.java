@@ -6,9 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.util.Collection;
-
 
 @Slf4j
 @Service
@@ -22,8 +23,11 @@ public class FilmService {
     public Collection<Film> getSortedDirectors(Integer directorId, String sortBy) {
         if (sortBy.equals("year")) {
             return filmStorage.getSortedDirectorsByYear(directorId);
+        } else if (sortBy.equals("likes")) {
+            return filmStorage.getSortedDirectorsByLikes(directorId);
+        } else {
+            throw new EntityNotFoundException("ссылка не найдена.");
         }
-        return filmStorage.getSortedDirectorsByLikes(directorId);
     }
 
     public Film update(Film film) {
@@ -59,7 +63,6 @@ public class FilmService {
         return filmStorage.getPopularityFilms(count);
     }
 
-
     public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
         return filmStorage.mostPopularFilms(count, genreId, year);
     }
@@ -68,4 +71,3 @@ public class FilmService {
         return filmStorage.getCommonFilms(userId, friendId);
     }
 }
-
