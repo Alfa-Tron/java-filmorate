@@ -107,6 +107,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getFriends(int id) {
+        String sql = "SELECT COUNT(*) FROM userFilmorate WHERE id = ?";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        if (count == 0) throw new EntityNotFoundException("Friend не найден");
         SqlRowSet userRowsFr = jdbcTemplate.queryForRowSet("select FRIEND_ID, STATUS from FRIENDSHIP where USER_ID = ?", id);
         Set<User> friends = new HashSet<>();
         while (userRowsFr.next()) {
@@ -129,6 +132,12 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
+    public void deleteUser(int userId) {
+        var sql = "DELETE FROM userFilmorate " +
+                "WHERE id =?";
+        jdbcTemplate.update(sql, userId);
+    }
+
     public Collection<Film> getRecommendation(int userId) {
         // Найти пользователей с максимальным количеством пересечения по лайкам
         String sql1 = "SELECT user_id as likes_count FROM FILMLIKES" +
@@ -191,14 +200,8 @@ public class UserDbStorage implements UserStorage {
                 }
                 film.setGenres(genres);
                 return film;
-
             }));
         }
-
         return films;
     }
-
 }
-
-
-

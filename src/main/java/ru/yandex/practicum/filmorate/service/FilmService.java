@@ -84,6 +84,10 @@ public class FilmService {
         return filmStorage.getPopularityFilms(count);
     }
 
+    public void deleteFilm(int filmId) {
+        filmStorage.deleteFilm(filmId);
+    }
+
     public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
         return filmStorage.mostPopularFilms(count, genreId, year);
     }

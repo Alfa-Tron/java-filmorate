@@ -19,6 +19,8 @@ public interface FilmStorage {
 
     Collection<Film> getPopularityFilms(Integer count);
 
+    void deleteFilm(int filmId);
+
     Collection<Film> getSortedDirectorsByYear(Integer directorId);
 
     Collection<Film> getSortedDirectorsByLikes(Integer directorId);

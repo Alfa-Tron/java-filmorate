@@ -72,8 +72,11 @@ public class UserService {
         return userStorage.getGeneralFriends(id, friendId);
     }
 
+    public void deleteUser(int userId) {
+        userStorage.deleteUser(userId);
+    }
+
     public Collection<Film> getRecommendation(int id) {
         return new ArrayList<>(userStorage.getRecommendation(id));
     }
 }
-

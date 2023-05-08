@@ -24,6 +24,5 @@ public class User {
     private Set<Integer> friends = new HashSet<>();
 
     public User() {
-
     }
 }
