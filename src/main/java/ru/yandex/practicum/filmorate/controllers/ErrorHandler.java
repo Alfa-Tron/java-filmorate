@@ -42,5 +42,4 @@ public class ErrorHandler {
     public Map<String, String> handleException(Exception e) {
         return Map.of("Ошибка", e.getMessage());
     }
-
 }
