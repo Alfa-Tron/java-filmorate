@@ -121,11 +121,11 @@ public class InMemoryUserStorage implements UserStorage {
         }
 
     }
-    
+
     @Override
     public void deleteUser(int userId) {
     }
-    
+
     public Collection<Film> getRecommendation(int id) {
         return null;
     }
