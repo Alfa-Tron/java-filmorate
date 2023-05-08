@@ -201,12 +201,7 @@ public class FilmDbStorage implements FilmStorage {
             if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
             return getFilm(filmId);
         }
-      /*  String query = "INSERT INTO filmLikes (film_id, user_id) VALUES (?, ?)";
-        int t = jdbcTemplate.update(query, filmId, userId);
-        String sql = "UPDATE FILM SET RATE=RATE+1 WHERE id = ? ";
-        int t1 = jdbcTemplate.update(sql, filmId);
-        if (t == 0 || t1 == 0) throw new EntityNotFoundException("такого id нет");
-        return getFilm(filmId);*/
+
         return null;
     }
 
@@ -291,7 +286,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql, filmId);
         log.info("Фильм с id '{}' удален", filmId);
     }
-        
+
     private void setDirectorsToFilm(Optional<List<Directors>> filmDirectors, int filmId) {
         String sqlQuery = "DELETE FROM FILMDIRECTORS WHERE FILM_ID = ?";
         List<Directors> directorsAsList = new ArrayList<>();
