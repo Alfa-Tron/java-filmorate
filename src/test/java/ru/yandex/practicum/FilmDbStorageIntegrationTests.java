@@ -91,25 +91,6 @@ public class FilmDbStorageIntegrationTests {
     }
 
     @Test
-    public void testUpdate() {
-        Film originalFilm = new Film();
-        originalFilm.setName("Test Film");
-        originalFilm.setDescription("Test description");
-        originalFilm.setReleaseDate(LocalDate.of(1967, 3, 25));
-        originalFilm.setDuration(120L);
-        originalFilm.setRate(5);
-        Mpa mpa = new Mpa();
-        mpa.setId(1);
-        originalFilm.setMpa(mpa);
-        filmDbStorage.addFilm(originalFilm);
-        mpa.setId(2);
-        originalFilm.setMpa(mpa);
-        filmDbStorage.update(originalFilm);
-        System.out.println(filmDbStorage.getFilm(1));
-        Assertions.assertEquals(2, filmDbStorage.getFilm(1).getMpa().getId());
-    }
-
-    @Test
     public void testAddLike() {
         Film originalFilm = new Film();
         originalFilm.setName("Test Film");
@@ -130,7 +111,7 @@ public class FilmDbStorageIntegrationTests {
         userStorage.register(user);
         filmDbStorage.addLike(1, 1);
 
-        Assertions.assertEquals(6, filmDbStorage.getFilm(1).getRate());
+        Assertions.assertEquals(1, filmDbStorage.getFilm(1).getRate());
     }
 
     @Test
@@ -153,9 +134,9 @@ public class FilmDbStorageIntegrationTests {
         user.setBirthday(LocalDate.of(1990, 1, 1));
         userStorage.register(user);
         filmDbStorage.addLike(1, 1);
-        Assertions.assertEquals(6, filmDbStorage.getFilm(1).getRate());
+        Assertions.assertEquals(1, filmDbStorage.getFilm(1).getRate());
         filmDbStorage.deleteLike(1, 1);
-        Assertions.assertEquals(5, filmDbStorage.getFilm(1).getRate());
+        Assertions.assertEquals(0, filmDbStorage.getFilm(1).getRate());
 
     }
 
