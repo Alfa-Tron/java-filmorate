@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.persistence.EntityNotFoundException;
-
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.users;
@@ -88,12 +87,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
+        return null;
+    }
+
+    @Override
     public Collection<Film> getSortedDirectorsByYear(Integer directorId) {
         return null;
     }
 
     @Override
     public Collection<Film> getSortedDirectorsByLikes(Integer directorId) {
+        return null;
+    }
+
+    @Override
+    public Collection<Film> getCommonFilms(int userId, int friendId) {
         return null;
     }
 }
