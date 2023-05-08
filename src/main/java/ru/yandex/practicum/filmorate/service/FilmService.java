@@ -10,8 +10,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.persistence.EntityNotFoundException;
-
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.time.Instant;
 import java.util.Collection;
