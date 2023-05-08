@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.repository.ReviewRepository;
@@ -20,7 +21,9 @@ import static ru.yandex.practicum.filmorate.enums.OperationType.*;
 class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository repository;
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
+    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
     private final FeedStorage feedStorage;
 

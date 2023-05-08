@@ -24,7 +24,9 @@ import static ru.yandex.practicum.filmorate.enums.OperationType.REMOVE;
 public class FilmService {
     @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
+    @Qualifier("feedDbStorage")
     private final FeedStorage feedStorage;
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
     public Film update(Film film) {
