@@ -90,7 +90,7 @@ public class FilmDbStorage implements FilmStorage, Search {
                     "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
                     "WHERE lower(f.film_name) LIKE lower('%" + query + "%')) res " +
-                    "ORDER BY res.rate";
+                    "ORDER BY res.rate DESC";
 
             return jdbcTemplate.query(sql, new Object[]{},
                     (rs, rowNum) -> getFilm(rs.getInt("id")));
@@ -101,7 +101,7 @@ public class FilmDbStorage implements FilmStorage, Search {
                     "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
                     "INNER JOIN Directors d ON d.id = fd.directors_id " +
                     "WHERE  lower(d.name)  LIKE lower('%" + query + "%') " +
-                    "ORDER BY f.rate";
+                    "ORDER BY f.rate DESC";
             return jdbcTemplate.query(sql, new Object[]{},
                     (rs, rowNum) -> getFilm(rs.getInt("id")));
         }
@@ -109,7 +109,7 @@ public class FilmDbStorage implements FilmStorage, Search {
             sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
                     "WHERE lower(f.film_name) LIKE lower('%" + query + "%') " +
-                    "ORDER BY f.rate";
+                    "ORDER BY f.rate DESC";
             return jdbcTemplate.query(sql, new Object[]{},
                     (rs, rowNum) -> getFilm(rs.getInt("id")));
         } else {
