@@ -137,7 +137,7 @@ public class UserDbStorage implements UserStorage {
                 "WHERE id =?";
         jdbcTemplate.update(sql, userId);
     }
-    
+
     public Collection<Film> getRecommendation(int userId) {
         // Найти пользователей с максимальным количеством пересечения по лайкам
         String sql1 = "SELECT user_id as likes_count FROM FILMLIKES" +
