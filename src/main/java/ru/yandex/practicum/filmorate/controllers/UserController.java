@@ -60,6 +60,7 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable int userId) {
         userService.deleteUser(userId);
+    }
 
     @GetMapping("/{id}/recommendations")
     public Collection<Film> getRecommendation(@PathVariable int id) {
