@@ -1,7 +1,11 @@
-
+CREATE TABLE IF NOT EXISTS directors
+(
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+);
 CREATE TABLE IF NOT EXISTS userFilmorate
 (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
     email     VARCHAR(50),
     login     VARCHAR(50),
     name VARCHAR(50),
@@ -32,7 +36,6 @@ CREATE TABLE IF NOT EXISTS mpa(
                                          name VARCHAR(6)
 );
 
-
 MERGE INTO mpa
     KEY (id)
     VALUES (1, 'G'),
@@ -60,6 +63,12 @@ CREATE TABLE IF NOT EXISTS filmLikes
     user_id INTEGER REFERENCES userFilmorate (id) ON DELETE CASCADE,
     PRIMARY KEY (film_id, user_id)
 );
+CREATE TABLE IF NOT EXISTS FilmDirectors
+(
+    film_id  INTEGER REFERENCES film (id),
+    directors_id INTEGER REFERENCES directors (id) ON DELETE CASCADE,
+    PRIMARY KEY (film_id, directors_id)
+);
 CREATE TABLE IF NOT EXISTS FilmGenre
 (
     film_id  INTEGER REFERENCES film (id) ON DELETE CASCADE,
@@ -72,3 +81,28 @@ CREATE TABLE IF NOT EXISTS Friendship (
                             status boolean,
                             PRIMARY KEY (user_id, friend_id)
 );
+
+-- REVIEWS definition
+CREATE TABLE IF NOT EXISTS REVIEWS (
+	REVIEW_ID BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	CONTENT CHARACTER VARYING NOT NULL,
+	IS_POSITIVE BOOLEAN NOT NULL,
+	FILM_ID INTEGER NOT NULL REFERENCES film (id) ON DELETE CASCADE,
+	USER_ID INTEGER NOT NULL REFERENCES userFilmorate (id) ON DELETE CASCADE
+);
+COMMENT ON COLUMN REVIEWS.REVIEW_ID IS 'Идентификатор отзыва';
+COMMENT ON COLUMN REVIEWS.CONTENT IS 'Текст отзыва';
+COMMENT ON COLUMN REVIEWS.IS_POSITIVE IS 'Тип отзыва (Негативный\\Положительный)';
+COMMENT ON COLUMN REVIEWS.FILM_ID IS 'Уникальный идентификатор фильма';
+COMMENT ON COLUMN REVIEWS.USER_ID IS 'Уникальный идентификатор пользователя';
+
+CREATE TABLE IF NOT EXISTS LIKEREVIEWS (
+	REVIEW_ID BIGINT NOT NULL REFERENCES REVIEWS (REVIEW_ID) ON DELETE CASCADE,
+	USER_ID INTEGER NOT NULL REFERENCES userFilmorate (id) ON DELETE CASCADE,
+	IS_POSITIVE BOOLEAN NOT NULL,
+	PRIMARY KEY ("REVIEW_ID", "USER_ID", "IS_POSITIVE")
+);
+COMMENT ON COLUMN LIKEREVIEWS.REVIEW_ID IS 'Идентификатор отзыва';
+COMMENT ON COLUMN LIKEREVIEWS.USER_ID IS 'Уникальный идентификатор пользователя';
+COMMENT ON COLUMN LIKEREVIEWS.IS_POSITIVE IS 'Тип лайка (Лайк\\Дизлайк)';
+-- END REVIEWS definition

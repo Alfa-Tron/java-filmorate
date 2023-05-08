@@ -7,18 +7,27 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
-import java.util.*;
-
+import java.util.Collection;
 
 @Slf4j
 @Service
 public class FilmService {
-
     private final FilmStorage filmStorage;
 
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
+    }
+
+    public Collection<Film> getSortedDirectors(Integer directorId, String sortBy) {
+        if (sortBy.equals("year")) {
+            return filmStorage.getSortedDirectorsByYear(directorId);
+        } else if (sortBy.equals("likes")) {
+            return filmStorage.getSortedDirectorsByLikes(directorId);
+        } else {
+            throw new EntityNotFoundException("ссылка не найдена.");
+        }
     }
 
     public Film update(Film film) {
@@ -36,7 +45,6 @@ public class FilmService {
             log.error("Дата релиза раньше 28 декабря 1895 года");
             throw new ValidationException();
         }
-
     }
 
     public Film getFilm(int id) {
@@ -58,5 +66,12 @@ public class FilmService {
     public void deleteFilm(int filmId) {
         filmStorage.deleteFilm(filmId);
     }
-}
 
+    public Collection<Film> mostPopularFilms(int count, int genreId, int year) {
+        return filmStorage.mostPopularFilms(count, genreId, year);
+    }
+
+    public Collection<Film> getCommonFilms(int userId, int friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
+}

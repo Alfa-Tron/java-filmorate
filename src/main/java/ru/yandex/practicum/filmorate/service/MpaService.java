@@ -9,7 +9,6 @@ import java.util.Collection;
 
 @Service("mpaService")
 public class MpaService {
-
     @Autowired
     private final MpaRepository mpaRepository;
 
