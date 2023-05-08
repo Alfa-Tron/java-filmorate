@@ -7,12 +7,12 @@ CREATE TABLE IF NOT EXISTS userFilmorate
     name VARCHAR(50),
     birthday  DATE
 );
-CREATE TABLE IF NOT EXISTS  friendship(
-                  friend_id INTEGER REFERENCES userFilmorate (id),
-                   user_id INTEGER REFERENCES userFilmorate (id),
-            PRIMARY KEY (friend_id, user_id),
-            status boolean
-);
+--CREATE TABLE IF NOT EXISTS  friendship(
+--                  friend_id INTEGER REFERENCES userFilmorate (id),
+--                   user_id INTEGER REFERENCES userFilmorate (id),
+--            PRIMARY KEY (friend_id, user_id),
+--            status boolean
+--);
 CREATE TABLE IF NOT EXISTS genre
 (
     id   INTEGER PRIMARY KEY,
@@ -56,19 +56,19 @@ CREATE TABLE IF NOT EXISTS film
 
 CREATE TABLE IF NOT EXISTS filmLikes
 (
-    film_id INTEGER REFERENCES film (id),
-    user_id INTEGER REFERENCES userFilmorate (id),
+    film_id INTEGER REFERENCES film (id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES userFilmorate (id) ON DELETE CASCADE,
     PRIMARY KEY (film_id, user_id)
 );
 CREATE TABLE IF NOT EXISTS FilmGenre
 (
-    film_id  INTEGER REFERENCES film (id),
-    genre_id INTEGER REFERENCES genre (id),
+    film_id  INTEGER REFERENCES film (id) ON DELETE CASCADE,
+    genre_id INTEGER REFERENCES genre (id) ON DELETE CASCADE,
     PRIMARY KEY (film_id, genre_id)
 );
 CREATE TABLE IF NOT EXISTS Friendship (
-                            user_id INTEGER REFERENCES userFilmorate(id),
-                            friend_id INTEGER REFERENCES userFilmorate(id),
+                            user_id INTEGER REFERENCES userFilmorate(id) ON DELETE CASCADE,
+                            friend_id INTEGER REFERENCES userFilmorate(id) ON DELETE CASCADE,
                             status boolean,
                             PRIMARY KEY (user_id, friend_id)
 );

@@ -137,19 +137,19 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void deleteUser(int userId) {
 
-        String sql = "DELETE FROM FilmLikes " +
-                "WHERE film_id =?";
-        jdbcTemplate.update(sql, userId);
+//        String sql = "DELETE FROM FilmLikes " +
+//                "WHERE film_id =?";
+//        jdbcTemplate.update(sql, userId);
+//
+//        sql = "DELETE FROM Friendship " +
+//                "WHERE friend_id =?";
+//        jdbcTemplate.update(sql, userId);
+//
+//        sql = "DELETE FROM Friendship " +
+//                "WHERE user_id =?";
+//        jdbcTemplate.update(sql, userId);
 
-        sql = "DELETE FROM Friendship " +
-                "WHERE friend_id =?";
-        jdbcTemplate.update(sql, userId);
-
-        sql = "DELETE FROM Friendship " +
-                "WHERE user_id =?";
-        jdbcTemplate.update(sql, userId);
-
-        sql = "DELETE FROM userFilmorate " +
+        var sql = "DELETE FROM userFilmorate " +
                 "WHERE id =?";
         jdbcTemplate.update(sql, userId);
 
