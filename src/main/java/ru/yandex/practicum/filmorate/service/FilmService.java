@@ -19,12 +19,10 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final Search search;
 
-
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, @Qualifier("filmDbStorage") Search search) {
         this.filmStorage = filmStorage;
         this.search = search;
     }
-
 
     public Collection<Film> searchByTitleOrDirector(String query, List<String> by) {
         if (by.size() == 2 && ((by.get(0).equals("director") || by.get(0).equals("title")) && (by.get(1)
@@ -95,6 +93,4 @@ public class FilmService {
     public Collection<Film> getCommonFilms(int userId, int friendId) {
         return filmStorage.getCommonFilms(userId, friendId);
     }
-
-
 }
