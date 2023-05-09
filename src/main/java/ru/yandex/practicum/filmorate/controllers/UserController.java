@@ -1,21 +1,27 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+    private final FeedService feedServiceImpl;
 
     @PostMapping
     public User register(@RequestBody @Valid User user) {
@@ -60,6 +66,11 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable int userId) {
         userService.deleteUser(userId);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Feed> getFeed(@PathVariable int id) {
+        return feedServiceImpl.getFeed(id);
     }
 
     @GetMapping("/{id}/recommendations")

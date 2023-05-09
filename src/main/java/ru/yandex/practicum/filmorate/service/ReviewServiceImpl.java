@@ -5,29 +5,38 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.repository.ReviewRepository;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.Instant;
 import java.util.Collection;
+
+import static ru.yandex.practicum.filmorate.enums.EventType.REVIEW;
+import static ru.yandex.practicum.filmorate.enums.OperationType.*;
 
 @RequiredArgsConstructor
 @Service
 class ReviewServiceImpl implements ReviewService {
+
     private final ReviewRepository repository;
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
     @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
+    private final FeedStorage feedStorage;
 
     @Override
     public Review addReview(Review review) {
         checkFilm(review.getFilmId());
         checkUser(review.getUserId());
         Long id = repository.addReview(review);
-        return review.toBuilder()
+        review = review.toBuilder()
                 .reviewId(id)
                 .build();
+        feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, ADD);
+        return review;
     }
 
     @Override
@@ -35,13 +44,20 @@ class ReviewServiceImpl implements ReviewService {
         checkFilm(review.getFilmId());
         checkUser(review.getUserId());
         checkReview(review.getReviewId());
-        return repository.updateReview(review);
+        review = repository.updateReview(review);
+        feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, UPDATE);
+        return review;
     }
 
     @Override
     public void deleteReview(Long reviewId) {
-        checkReview(reviewId);
-        repository.deleteReview(reviewId);
+        Review review = repository.getReviewById(reviewId);
+        if (review == null) {
+            throw new EntityNotFoundException();
+        } else {
+            repository.deleteReview(reviewId);
+            feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, REMOVE);
+        }
     }
 
     @Override
@@ -107,5 +123,4 @@ class ReviewServiceImpl implements ReviewService {
             throw new EntityNotFoundException();
         }
     }
-
 }
