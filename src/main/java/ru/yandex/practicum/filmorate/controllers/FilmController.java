@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -68,5 +69,10 @@ public class FilmController {
     public void deleteFilm(@PathVariable int filmId) {
         filmService.deleteFilm(filmId);
     }
-}
 
+    @GetMapping("/films/search")
+    public Collection<Film> searchByTitleOrDirector(@RequestParam(name = "query") String query,
+                                                    @RequestParam(name = "by") List<String> by) {
+        return filmService.searchByTitleOrDirector(query, by);
+    }
+}

@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.Search;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 
 import static ru.yandex.practicum.filmorate.enums.EventType.LIKE;
 import static ru.yandex.practicum.filmorate.enums.OperationType.ADD;
@@ -27,6 +29,22 @@ public class FilmService {
     private final FeedStorage feedStorage;
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
+    private final Search search;
+
+    public Collection<Film> searchByTitleOrDirector(String query, List<String> by) {
+        if (by.size() == 2 && ((by.get(0).equals("director") || by.get(0).equals("title")) && (by.get(1)
+                .equals("director") || by.get(1).equals("title")) && !(by.get(0).equals(by.get(1))))) {
+            return search.searchByTitleOrDirector(query, "director", "title");
+        } else {
+            if ((by.get(0).equals("director"))) {
+                return search.searchByTitleOrDirector(query, "director", "");
+            } else if (by.get(0).equals("title")) {
+                return search.searchByTitleOrDirector(query, "", "title");
+            } else {
+                return search.searchByTitleOrDirector(query, "", "");
+            }
+        }
+    }
 
     public Collection<Film> getSortedDirectors(Integer directorId, String sortBy) {
         if (sortBy.equals("year")) {
