@@ -18,9 +18,9 @@ import java.util.Objects;
 class ReviewRepositoryImpl implements ReviewRepository {
     private final JdbcTemplate jdbcTemplate;
     private static final RowMapper<Review> REVIEW_MAPPER = (rs, rowNum) -> Review.builder()
-            .reviewId(rs.getLong("REVIEW_ID"))
+            .id(rs.getLong("REVIEW_ID"))
             .content(rs.getString("CONTENT"))
-            .isPositive(rs.getBoolean("IS_POSITIVE"))
+            .positive(rs.getBoolean("IS_POSITIVE"))
             .useful(rs.getLong("USEFUL"))
             .filmId(rs.getInt("FILM_ID"))
             .userId(rs.getInt("USER_ID"))
@@ -34,7 +34,7 @@ class ReviewRepositoryImpl implements ReviewRepository {
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql, new String[]{"REVIEW_ID"});
             statement.setString(1, review.getContent());
-            statement.setBoolean(2, review.getIsPositive());
+            statement.setBoolean(2, review.getPositive());
             statement.setLong(3, review.getFilmId());
             statement.setLong(4, review.getUserId());
             return statement;
@@ -49,11 +49,11 @@ class ReviewRepositoryImpl implements ReviewRepository {
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, review.getContent());
-            statement.setBoolean(2, review.getIsPositive());
-            statement.setLong(3, review.getReviewId());
+            statement.setBoolean(2, review.getPositive());
+            statement.setLong(3, review.getId());
             return statement;
         });
-        return Objects.requireNonNull(getReviewById(review.getReviewId()));
+        return Objects.requireNonNull(getReviewById(review.getId()));
     }
 
     @Override

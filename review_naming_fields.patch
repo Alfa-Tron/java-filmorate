@@ -1,0 +1,185 @@
+Index: src/main/java/ru/yandex/practicum/filmorate/service/ReviewServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/ru/yandex/practicum/filmorate/service/ReviewServiceImpl.java b/src/main/java/ru/yandex/practicum/filmorate/service/ReviewServiceImpl.java
+--- a/src/main/java/ru/yandex/practicum/filmorate/service/ReviewServiceImpl.java	(revision aa151105c70c8b2430802ab4c518645eaf22ef28)
++++ b/src/main/java/ru/yandex/practicum/filmorate/service/ReviewServiceImpl.java	(date 1683774100178)
+@@ -33,9 +33,9 @@
+         checkUser(review.getUserId());
+         Long id = repository.addReview(review);
+         review = review.toBuilder()
+-                .reviewId(id)
++                .id(id)
+                 .build();
+-        feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, ADD);
++        feedStorage.addFeed(review.getId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, ADD);
+         return review;
+     }
+ 
+@@ -43,9 +43,9 @@
+     public Review updateReview(Review review) {
+         checkFilm(review.getFilmId());
+         checkUser(review.getUserId());
+-        checkReview(review.getReviewId());
++        checkReview(review.getId());
+         review = repository.updateReview(review);
+-        feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, UPDATE);
++        feedStorage.addFeed(review.getId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, UPDATE);
+         return review;
+     }
+ 
+@@ -53,10 +53,10 @@
+     public void deleteReview(Long reviewId) {
+         Review review = repository.getReviewById(reviewId);
+         if (review == null) {
+-            throw new EntityNotFoundException();
++            throw new EntityNotFoundException("Отзыв с идентификатором " + reviewId + " не найден");
+         } else {
+             repository.deleteReview(reviewId);
+-            feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, REMOVE);
++            feedStorage.addFeed(review.getId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, REMOVE);
+         }
+     }
+ 
+@@ -64,7 +64,7 @@
+     public Review getReviewById(Long reviewId) {
+         Review review = repository.getReviewById(reviewId);
+         if (review == null) {
+-            throw new EntityNotFoundException();
++            throw new EntityNotFoundException("Отзыв с идентификатором " + reviewId + " не найден");
+         }
+         return review;
+     }
+Index: src/main/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImpl.java b/src/main/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImpl.java
+--- a/src/main/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImpl.java	(revision aa151105c70c8b2430802ab4c518645eaf22ef28)
++++ b/src/main/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImpl.java	(date 1683775555317)
+@@ -18,9 +18,9 @@
+ class ReviewRepositoryImpl implements ReviewRepository {
+     private final JdbcTemplate jdbcTemplate;
+     private static final RowMapper<Review> REVIEW_MAPPER = (rs, rowNum) -> Review.builder()
+-            .reviewId(rs.getLong("REVIEW_ID"))
++            .id(rs.getLong("REVIEW_ID"))
+             .content(rs.getString("CONTENT"))
+-            .isPositive(rs.getBoolean("IS_POSITIVE"))
++            .positive(rs.getBoolean("IS_POSITIVE"))
+             .useful(rs.getLong("USEFUL"))
+             .filmId(rs.getInt("FILM_ID"))
+             .userId(rs.getInt("USER_ID"))
+@@ -34,7 +34,7 @@
+         jdbcTemplate.update(con -> {
+             PreparedStatement statement = con.prepareStatement(sql, new String[]{"REVIEW_ID"});
+             statement.setString(1, review.getContent());
+-            statement.setBoolean(2, review.getIsPositive());
++            statement.setBoolean(2, review.getPositive());
+             statement.setLong(3, review.getFilmId());
+             statement.setLong(4, review.getUserId());
+             return statement;
+@@ -49,11 +49,11 @@
+         jdbcTemplate.update(con -> {
+             PreparedStatement statement = con.prepareStatement(sql);
+             statement.setString(1, review.getContent());
+-            statement.setBoolean(2, review.getIsPositive());
+-            statement.setLong(3, review.getReviewId());
++            statement.setBoolean(2, review.getPositive());
++            statement.setLong(3, review.getId());
+             return statement;
+         });
+-        return Objects.requireNonNull(getReviewById(review.getReviewId()));
++        return Objects.requireNonNull(getReviewById(review.getId()));
+     }
+ 
+     @Override
+Index: src/test/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImplTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImplTest.java b/src/test/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImplTest.java
+--- a/src/test/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImplTest.java	(revision aa151105c70c8b2430802ab4c518645eaf22ef28)
++++ b/src/test/java/ru/yandex/practicum/filmorate/repository/ReviewRepositoryImplTest.java	(date 1683774867127)
+@@ -79,7 +79,7 @@
+                 .userId(users.get(0).getId())
+                 .filmId(films.get(0).getId())
+                 .content("jnps")
+-                .isPositive(true)
++                .positive(true)
+                 .build());
+         Assertions.assertNotNull(reviewId);
+     }
+@@ -91,25 +91,25 @@
+         String content = "content";
+         reviewRepository.updateReview(review.toBuilder()
+                 .content(content)
+-                .isPositive(false)
++                .positive(false)
+                 .filmId(-1)
+                 .userId(-1)
+                 .build()
+         );
+-        Review reviewById = reviewRepository.getReviewById(review.getReviewId());
++        Review reviewById = reviewRepository.getReviewById(review.getId());
+ 
+         Assertions.assertNotNull(reviewById);
+         Assertions.assertEquals(content, reviewById.getContent());
+         Assertions.assertEquals(review.getFilmId(), reviewById.getFilmId());
+         Assertions.assertEquals(review.getUserId(), reviewById.getUserId());
+-        Assertions.assertFalse(reviewById.getIsPositive());
++        Assertions.assertFalse(reviewById.isPositive());
+     }
+ 
+     @Test
+     @Order(11)
+     public void deleteReview() {
+         Review review = Objects.requireNonNull(reviewRepository.getReviewById(reviewId));
+-        Long reviewId = review.getReviewId();
++        Long reviewId = review.getId();
+         reviewRepository.deleteReview(reviewId);
+ 
+         Assertions.assertEquals(0, reviewRepository.getAllReviews(1L).size());
+@@ -119,7 +119,7 @@
+     @Order(4)
+     public void getReviewById() {
+         Review review = Objects.requireNonNull(reviewRepository.getReviewById(reviewId));
+-        Assertions.assertEquals(reviewId, review.getReviewId());
++        Assertions.assertEquals(reviewId, review.getId());
+     }
+ 
+     @Test
+Index: src/main/java/ru/yandex/practicum/filmorate/model/Review.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/ru/yandex/practicum/filmorate/model/Review.java b/src/main/java/ru/yandex/practicum/filmorate/model/Review.java
+--- a/src/main/java/ru/yandex/practicum/filmorate/model/Review.java	(revision aa151105c70c8b2430802ab4c518645eaf22ef28)
++++ b/src/main/java/ru/yandex/practicum/filmorate/model/Review.java	(date 1683775555327)
+@@ -1,5 +1,6 @@
+ package ru.yandex.practicum.filmorate.model;
+ 
++import com.fasterxml.jackson.annotation.JsonProperty;
+ import lombok.*;
+ import lombok.extern.jackson.Jacksonized;
+ import org.springframework.lang.NonNull;
+@@ -10,11 +11,13 @@
+ @Jacksonized
+ @Getter
+ public class Review {
+-    private Long reviewId;
++    @JsonProperty("reviewId")
++    private Long id;
+     @NonNull
+     private final String content;
+     @NonNull
+-    private final Boolean isPositive;
++    @JsonProperty("isPositive")
++    private final Boolean positive;
+     @NonNull
+     private final Integer userId;
+     @NonNull

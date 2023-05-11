@@ -79,7 +79,7 @@ class ReviewRepositoryImplTest {
                 .userId(users.get(0).getId())
                 .filmId(films.get(0).getId())
                 .content("jnps")
-                .isPositive(true)
+                .positive(true)
                 .build());
         Assertions.assertNotNull(reviewId);
     }
@@ -91,25 +91,25 @@ class ReviewRepositoryImplTest {
         String content = "content";
         reviewRepository.updateReview(review.toBuilder()
                 .content(content)
-                .isPositive(false)
+                .positive(false)
                 .filmId(-1)
                 .userId(-1)
                 .build()
         );
-        Review reviewById = reviewRepository.getReviewById(review.getReviewId());
+        Review reviewById = reviewRepository.getReviewById(review.getId());
 
         Assertions.assertNotNull(reviewById);
         Assertions.assertEquals(content, reviewById.getContent());
         Assertions.assertEquals(review.getFilmId(), reviewById.getFilmId());
         Assertions.assertEquals(review.getUserId(), reviewById.getUserId());
-        Assertions.assertFalse(reviewById.getIsPositive());
+        Assertions.assertFalse(reviewById.isPositive());
     }
 
     @Test
     @Order(11)
     public void deleteReview() {
         Review review = Objects.requireNonNull(reviewRepository.getReviewById(reviewId));
-        Long reviewId = review.getReviewId();
+        Long reviewId = review.getId();
         reviewRepository.deleteReview(reviewId);
 
         Assertions.assertEquals(0, reviewRepository.getAllReviews(1L).size());
@@ -119,7 +119,7 @@ class ReviewRepositoryImplTest {
     @Order(4)
     public void getReviewById() {
         Review review = Objects.requireNonNull(reviewRepository.getReviewById(reviewId));
-        Assertions.assertEquals(reviewId, review.getReviewId());
+        Assertions.assertEquals(reviewId, review.getId());
     }
 
     @Test

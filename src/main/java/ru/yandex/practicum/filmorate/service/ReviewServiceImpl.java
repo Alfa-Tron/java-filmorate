@@ -33,9 +33,9 @@ class ReviewServiceImpl implements ReviewService {
         checkUser(review.getUserId());
         Long id = repository.addReview(review);
         review = review.toBuilder()
-                .reviewId(id)
+                .id(id)
                 .build();
-        feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, ADD);
+        feedStorage.addFeed(review.getId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, ADD);
         return review;
     }
 
@@ -43,9 +43,9 @@ class ReviewServiceImpl implements ReviewService {
     public Review updateReview(Review review) {
         checkFilm(review.getFilmId());
         checkUser(review.getUserId());
-        checkReview(review.getReviewId());
+        checkReview(review.getId());
         review = repository.updateReview(review);
-        feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, UPDATE);
+        feedStorage.addFeed(review.getId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, UPDATE);
         return review;
     }
 
@@ -53,10 +53,10 @@ class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Long reviewId) {
         Review review = repository.getReviewById(reviewId);
         if (review == null) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Отзыв с идентификатором " + reviewId + " не найден");
         } else {
             repository.deleteReview(reviewId);
-            feedStorage.addFeed(review.getReviewId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, REMOVE);
+            feedStorage.addFeed(review.getId().intValue(), review.getUserId(), Instant.now().toEpochMilli(), REVIEW, REMOVE);
         }
     }
 
@@ -64,7 +64,7 @@ class ReviewServiceImpl implements ReviewService {
     public Review getReviewById(Long reviewId) {
         Review review = repository.getReviewById(reviewId);
         if (review == null) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Отзыв с идентификатором " + reviewId + " не найден");
         }
         return review;
     }

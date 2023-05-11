@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 import org.springframework.lang.NonNull;
@@ -10,11 +11,13 @@ import org.springframework.lang.NonNull;
 @Jacksonized
 @Getter
 public class Review {
-    private Long reviewId;
+    @JsonProperty("reviewId")
+    private Long id;
     @NonNull
     private final String content;
     @NonNull
-    private final Boolean isPositive;
+    @JsonProperty("isPositive")
+    private final Boolean positive;
     @NonNull
     private final Integer userId;
     @NonNull
