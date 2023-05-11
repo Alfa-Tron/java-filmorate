@@ -127,6 +127,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public Collection<Film> getRecommendation(int id) {
-        return null;
+        return new ArrayList<>();
     }
 }

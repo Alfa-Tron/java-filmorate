@@ -108,19 +108,19 @@ class ReviewServiceImpl implements ReviewService {
 
     private void checkFilm(Integer filmId) {
         if (filmStorage.getFilm(filmId) == null) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Фильм с идентификатором " + filmId + " не найден.");
         }
     }
 
     private void checkUser(Integer userId) {
         if (userStorage.getUserOne(userId) == null) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Пользователь с идентификатором " + userId + " не найден.");
         }
     }
 
     private void checkReview(Long reviewId) {
         if (repository.getReviewById(reviewId) == null) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Отзыв с идентификатором " + reviewId + " не найден.");
         }
     }
 }

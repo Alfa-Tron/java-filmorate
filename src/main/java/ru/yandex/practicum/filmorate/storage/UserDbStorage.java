@@ -140,10 +140,13 @@ public class UserDbStorage implements UserStorage {
 
     public Collection<Film> getRecommendation(int userId) {
         // Найти пользователей с максимальным количеством пересечения по лайкам
-        String sql1 = "SELECT user_id as likes_count FROM FILMLIKES" +
-                " WHERE film_id IN (SELECT film_id FROM filmLikes WHERE user_id = ?) AND user_id <> ? GROUP BY user_id " +
-                " ORDER BY likes_count DESC" +
-                " LIMIT 1;";
+        String sql1 = "SELECT F1.user_id AS likes_count " +
+                "FROM FILMLIKES F1 " +
+                "JOIN FILMLIKES F2 ON F1.film_id = F2.film_id AND F2.user_id = ? " +
+                "WHERE F1.user_id <> ? " +
+                "GROUP BY F1.user_id " +
+                "ORDER BY likes_count DESC " +
+                "LIMIT 1;";
         List<Integer> similarUsers = jdbcTemplate.queryForList(sql1, Integer.class, userId, userId);
         if (similarUsers.isEmpty()) return new ArrayList<>();
         // Определить фильмы, которые один пролайкал, а другой нет

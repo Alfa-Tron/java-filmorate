@@ -15,7 +15,6 @@ public interface ReviewRepository {
 
     void deleteReview(@NonNull Long reviewId);
 
-    @Nullable
     Review getReviewById(@NonNull Long reviewId);
 
     Collection<Review> getAllReviews(@NonNull Long count);

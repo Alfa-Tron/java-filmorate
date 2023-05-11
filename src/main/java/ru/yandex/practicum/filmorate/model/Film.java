@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,9 +25,9 @@ public class Film {
     private Long duration;
     private Set<Integer> likes = new HashSet<>();
     private Integer rate = 0;
-    private List<Genre> genres = null;
+    private List<Genre> genres = new ArrayList<>();
     private Mpa mpa = null;
-    private List<Directors> directors = null;
+    private List<Directors> directors = new ArrayList<>();
 
     public boolean dateAfter() {
         LocalDate date = LocalDate.of(1895, 11, 28);
