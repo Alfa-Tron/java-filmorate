@@ -102,7 +102,7 @@ class ReviewRepositoryImplTest {
         Assertions.assertEquals(content, reviewById.getContent());
         Assertions.assertEquals(review.getFilmId(), reviewById.getFilmId());
         Assertions.assertEquals(review.getUserId(), reviewById.getUserId());
-        Assertions.assertFalse(reviewById.isPositive());
+        Assertions.assertFalse(reviewById.getPositive());
     }
 
     @Test
