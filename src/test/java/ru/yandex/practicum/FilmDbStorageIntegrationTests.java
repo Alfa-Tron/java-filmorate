@@ -86,7 +86,7 @@ public class FilmDbStorageIntegrationTests {
         mpa1.setId(1);
         originalFilm1.setMpa(mpa1);
         filmDbStorage.addFilm(originalFilm1);
-        Assertions.assertEquals(2, filmDbStorage.getFilms().size());
+        Assertions.assertEquals(3, filmDbStorage.getFilms().size());
 
     }
 
