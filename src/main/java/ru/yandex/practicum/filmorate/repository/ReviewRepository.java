@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.repository;
 
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.Collection;
