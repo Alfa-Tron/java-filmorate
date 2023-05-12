@@ -32,19 +32,11 @@ public class FilmService {
     private final Search search;
 
     public Collection<Film> searchByTitleOrDirector(String query, List<String> by) {
-        if (by.size() == 2 && ((by.get(0).equals("director") || by.get(0).equals("title")) && (by.get(1)
-                .equals("director") || by.get(1).equals("title")) && !(by.get(0).equals(by.get(1))))) {
-            return search.searchByTitleOrDirector(query, "director", "title");
-        } else {
-            if ((by.get(0).equals("director"))) {
-                return search.searchByTitleOrDirector(query, "director", "");
-            } else if (by.get(0).equals("title")) {
-                return search.searchByTitleOrDirector(query, "", "title");
-            } else {
-                return search.searchByTitleOrDirector(query, "", "");
-            }
-        }
+        boolean searchByTitle = by.contains("title");
+        boolean searchByDirector = by.contains("director");
+        return search.searchByTitleOrDirector(query, searchByTitle, searchByDirector);
     }
+
 
     public Collection<Film> getSortedDirectors(Integer directorId, String sortBy) {
         if (sortBy.equals("year")) {

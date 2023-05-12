@@ -77,25 +77,21 @@ public class FilmDbStorage implements FilmStorage, Search {
     }
 
     @Override
-    public Collection<Film> searchByTitleOrDirector(String query, String director, String title) {
+    public Collection<Film> searchByTitleOrDirector(String query, boolean searchByTitle, boolean searchByDirector) {
         String sql;
-        if (director.equals("director") && title.equals("title")) {
-            sql = "SELECT res.id, res.film_name, res.description, res.releaseDate, res.duration, res.rate " +
-                    "FROM (SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
+        if (searchByDirector && searchByTitle) {
+            sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
-                    "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
-                    "INNER JOIN Directors d ON d.id = fd.directors_id " +
-                    "WHERE lower(d.name) LIKE lower('%" + query + "%')" +
-                    " UNION " +
-                    "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
-                    "FROM film f " +
-                    "WHERE lower(f.film_name) LIKE lower('%" + query + "%')) res " +
-                    "ORDER BY res.rate DESC";
+                    "LEFT JOIN FilmDirectors fd ON f.id = fd.film_id " +
+                    "LEFT JOIN Directors d ON d.id = fd.directors_id " +
+                    "WHERE  lower(d.name)  LIKE lower('%" + query + "%') OR " +
+                    "lower(f.film_name) LIKE lower('%" + query + "%') " +
+                    "ORDER BY f.rate DESC";
 
             return jdbcTemplate.query(sql, new Object[]{},
                     (rs, rowNum) -> getFilm(rs.getInt("id")));
         }
-        if (director.equals("director") && title.equals("")) {
+        if (searchByDirector) {
             sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
                     "INNER JOIN FilmDirectors fd ON f.id = fd.film_id " +
@@ -105,7 +101,7 @@ public class FilmDbStorage implements FilmStorage, Search {
             return jdbcTemplate.query(sql, new Object[]{},
                     (rs, rowNum) -> getFilm(rs.getInt("id")));
         }
-        if (director.equals("") && title.equals("title")) {
+        if (searchByTitle) {
             sql = "SELECT f.id, f.film_name, f.description, f.releaseDate, f.duration, f.rate " +
                     "FROM film f " +
                     "WHERE lower(f.film_name) LIKE lower('%" + query + "%') " +
@@ -116,7 +112,6 @@ public class FilmDbStorage implements FilmStorage, Search {
             return new ArrayList<>();
         }
     }
-
 
     @Override
     public Collection<Film> getSortedDirectorsByYear(Integer directorId) {
