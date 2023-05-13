@@ -19,4 +19,13 @@ public interface FilmStorage {
 
     Collection<Film> getPopularityFilms(Integer count);
 
+    void deleteFilm(int filmId);
+
+    Collection<Film> getSortedDirectorsByYear(Integer directorId);
+
+    Collection<Film> getSortedDirectorsByLikes(Integer directorId);
+
+    Collection<Film> mostPopularFilms(int count, int genreId, int year);
+
+    Collection<Film> getCommonFilms(int userId, int friendId);
 }

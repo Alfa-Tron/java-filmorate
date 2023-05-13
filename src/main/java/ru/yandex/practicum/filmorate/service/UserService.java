@@ -1,24 +1,32 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import javax.persistence.EntityNotFoundException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static ru.yandex.practicum.filmorate.enums.EventType.FRIEND;
+import static ru.yandex.practicum.filmorate.enums.OperationType.ADD;
+import static ru.yandex.practicum.filmorate.enums.OperationType.REMOVE;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
-
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
-
-    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
-
+    @Qualifier("feedDbStorage")
+    private final FeedStorage feedStorage;
 
     public User register(User user) {
         return userStorage.register(user);
@@ -37,10 +45,22 @@ public class UserService {
     }
 
     public User addFriend(int id, int friendId) {
+        if (userStorage.getUserOne(id) == null || userStorage.getUserOne(friendId) == null) {
+            log.warn("Получен некорректный идентификатор");
+            throw new EntityNotFoundException();
+        } else {
+            feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, ADD);
+        }
         return userStorage.addFriend(id, friendId);
     }
 
     public User deleteFriend(int id, int friendId) {
+        if (userStorage.getUserOne(id) == null || userStorage.getUserOne(friendId) == null) {
+            log.warn("Получен некорректный идентификатор");
+            throw new EntityNotFoundException();
+        } else {
+            feedStorage.addFeed(friendId, id, Instant.now().toEpochMilli(), FRIEND, REMOVE);
+        }
         return userStorage.deleteFriend(id, friendId);
     }
 
@@ -52,5 +72,11 @@ public class UserService {
         return userStorage.getGeneralFriends(id, friendId);
     }
 
-}
+    public void deleteUser(int userId) {
+        userStorage.deleteUser(userId);
+    }
 
+    public Collection<Film> getRecommendation(int id) {
+        return new ArrayList<>(userStorage.getRecommendation(id));
+    }
+}
