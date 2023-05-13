@@ -289,12 +289,11 @@ public class FilmDbStorage implements FilmStorage, Search {
     public Collection<Film> mostPopularFilmsByYear(int count, int year) {
         String sqlYearOnly = "SELECT f.id " +
                 "FROM film f " +
-                "LEFT JOIN filmGenre fg ON f.id = fg.film_id " +
                 "WHERE EXTRACT(YEAR FROM f.releaseDate) = ? " +
                 "ORDER BY f.rate DESC " +
                 "LIMIT ?";
         List<Integer> ids = jdbcTemplate.queryForList(sqlYearOnly, Integer.class, year, count);
-        Set<Film> films = new HashSet<>();
+        List<Film> films = new ArrayList<>();
         for (int id : ids) {
             films.add(getFilm(id));
         }
